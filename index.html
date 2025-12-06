@@ -15,11 +15,7 @@
       --text-muted: #9ca3af;
       --border-subtle: #272b33;
     }
-
-    * {
-      box-sizing: border-box;
-    }
-
+    * { box-sizing: border-box; }
     body {
       margin: 0;
       padding: 16px;
@@ -29,17 +25,22 @@
       background: radial-gradient(circle at top, #151821 0, #050608 52%);
       color: var(--text-main);
     }
-
     .app-shell {
       max-width: 720px;
       margin: 0 auto;
     }
-
     header {
       text-align: center;
       margin-bottom: 18px;
     }
-
+    .logo {
+      display: block;
+      margin: 0 auto 10px;
+      max-width: 220px;      /* B：中くらい */
+      width: 52vw;
+      height: auto;
+      filter: drop-shadow(0 10px 26px rgba(0,0,0,0.8));
+    }
     h1 {
       font-size: 1.3rem;
       margin: 0;
@@ -47,13 +48,11 @@
       text-transform: uppercase;
       color: var(--gold);
     }
-
     .subtitle {
       margin-top: 6px;
       font-size: 0.85rem;
       color: var(--text-muted);
     }
-
     .card {
       background: rgba(10,12,18,0.96);
       border-radius: 18px;
@@ -64,7 +63,6 @@
       padding: 14px 14px 18px;
       backdrop-filter: blur(12px);
     }
-
     label {
       font-size: 0.85rem;
       font-weight: 600;
@@ -72,7 +70,6 @@
       margin-top: 12px;
       margin-bottom: 4px;
     }
-
     textarea,
     select,
     input {
@@ -86,16 +83,13 @@
       outline: none;
       -webkit-appearance: none;
     }
-
     textarea {
       min-height: 110px;
       resize: vertical;
     }
-
     textarea::placeholder {
       color: rgba(156,163,175,0.8);
     }
-
     select {
       padding-right: 28px;
       background-image:
@@ -107,17 +101,12 @@
       background-size: 6px 6px, 6px 6px;
       background-repeat: no-repeat;
     }
-
     .row {
       display: flex;
       gap: 8px;
       margin-top: 4px;
     }
-
-    .row > * {
-      flex: 1;
-    }
-
+    .row > * { flex: 1; }
     button {
       width: 100%;
       margin-top: 14px;
@@ -130,30 +119,25 @@
         background 0.12s ease-out, opacity 0.12s ease-out;
       font-weight: 600;
     }
-
     .primary {
       background: linear-gradient(135deg, var(--gold) 0%, var(--gold-soft) 100%);
       color: #1b1b1f;
       box-shadow: 0 10px 25px rgba(0,0,0,0.6);
     }
-
     .primary:active {
       transform: translateY(1px) scale(0.99);
       box-shadow: 0 4px 12px rgba(0,0,0,0.7);
       opacity: 0.9;
     }
-
     .secondary {
       background: transparent;
       color: var(--gold-soft);
       border: 1px solid rgba(243,216,122,0.5);
     }
-
     .secondary:active {
       transform: translateY(1px) scale(0.99);
       opacity: 0.9;
     }
-
     .tabs {
       display: flex;
       border-radius: 999px;
@@ -163,7 +147,6 @@
       margin-top: 2px;
       border: 1px solid rgba(212,175,55,0.24);
     }
-
     .tab {
       flex: 1;
       text-align: center;
@@ -178,38 +161,25 @@
       justify-content: center;
       gap: 4px;
     }
-
     .tab::before {
       content: "●";
       font-size: 0.55rem;
       opacity: 0.45;
     }
-
     .tab.active {
       background: radial-gradient(circle at top left, #fff9e0 0, var(--gold-soft) 48%, var(--gold) 100%);
       color: #111318;
       font-weight: 700;
       box-shadow: 0 4px 14px rgba(0,0,0,0.7);
     }
-
-    .tab.active::before {
-      opacity: 1;
-    }
-
-    .section {
-      display: none;
-    }
-
-    .section.active {
-      display: block;
-    }
-
+    .tab.active::before { opacity: 1; }
+    .section { display: none; }
+    .section.active { display: block; }
     .note {
       font-size: 0.78rem;
       color: var(--text-muted);
       margin-top: 4px;
     }
-
     .results {
       margin-top: 18px;
       padding: 12px;
@@ -217,7 +187,6 @@
       background: linear-gradient(135deg, rgba(18,20,28,0.98), rgba(10,12,18,0.98));
       border: 1px solid rgba(212,175,55,0.35);
     }
-
     .results-header {
       font-size: 0.85rem;
       margin-bottom: 8px;
@@ -227,72 +196,48 @@
       align-items: center;
       gap: 6px;
     }
-
-    .results-header span.icon {
-      font-size: 0.9rem;
-    }
-
+    .results-header span.icon { font-size: 0.9rem; }
     .team {
       margin-bottom: 10px;
       padding-bottom: 8px;
       border-bottom: 1px dashed rgba(75,85,99,0.7);
     }
-
     .team:last-of-type {
       border-bottom: none;
       margin-bottom: 6px;
       padding-bottom: 0;
     }
-
     .team-title {
       font-weight: 700;
       margin-bottom: 3px;
       font-size: 0.9rem;
       color: var(--gold-soft);
     }
-
-    .team-members {
-      font-size: 0.9rem;
-    }
-
+    .team-members { font-size: 0.9rem; }
     .team-members span.empty {
       color: var(--text-muted);
       font-size: 0.8rem;
     }
-
-    .line-label {
-      margin-top: 10px;
-    }
-
+    .line-label { margin-top: 10px; }
     .footer-note {
       margin-top: 8px;
       font-size: 0.75rem;
       color: var(--text-muted);
       text-align: center;
     }
-
     @media (min-width: 640px) {
-      body {
-        padding: 24px 16px 32px;
-      }
-      header {
-        margin-bottom: 20px;
-      }
-      h1 {
-        font-size: 1.4rem;
-      }
-      .card {
-        padding: 18px 18px 20px;
-      }
-      button {
-        font-size: 1rem;
-      }
+      body { padding: 24px 16px 32px; }
+      header { margin-bottom: 20px; }
+      h1 { font-size: 1.4rem; }
+      .card { padding: 18px 18px 20px; }
+      button { font-size: 1rem; }
     }
   </style>
 </head>
 <body>
   <div class="app-shell">
     <header>
+      <img src="logo.png" alt="パブスポ PUBLIC × SPORTS ロゴ" class="logo">
       <h1>パブスポ専用 チーム分けツール</h1>
       <div class="subtitle">1回目：人数をランダム分配 ／ 2回目以降：前回チームから再分配</div>
     </header>
@@ -305,13 +250,8 @@
 
       <!-- 初回モード -->
       <section id="section-first" class="section active">
-        <label for="members-first">メンバー一覧（1行につき1人）</label>
-        <textarea id="members-first" placeholder="例）
-たける
-さとし
-ゆうこ
-まり
-けんた"></textarea>
+        <label for="members-first">メンバー</label>
+        <textarea id="members-first" placeholder="1行につき1人ずつ入力してください"></textarea>
 
         <label for="teamCount-first">チーム数</label>
         <select id="teamCount-first">
@@ -323,11 +263,6 @@
         </select>
 
         <div class="row">
-          <div>
-            <label for="teamPrefix-first">チーム名プレフィックス</label>
-            <input id="teamPrefix-first" type="text" value="チーム" />
-            <div class="note">例：チーム / GROUP / Squad など</div>
-          </div>
           <div>
             <label for="startLabel-first">チーム番号の開始</label>
             <select id="startLabel-first">
@@ -355,10 +290,6 @@
         </select>
 
         <div class="row">
-          <div>
-            <label for="teamPrefix-next">チーム名プレフィックス</label>
-            <input id="teamPrefix-next" type="text" value="チーム" />
-          </div>
           <div>
             <label for="startLabel-next">チーム番号の開始</label>
             <select id="startLabel-next">
@@ -422,7 +353,7 @@
       return array;
     }
 
-    function buildOutput(teams, prefix, startLabel) {
+    function buildOutput(teams, startLabel) {
       const resultsDiv = document.getElementById('results');
       resultsDiv.innerHTML = '';
 
@@ -435,7 +366,7 @@
         } else {
           label = (i + 1).toString();
         }
-        const teamName = prefix + label;
+        const teamName = 'チーム' + label;
 
         const teamDiv = document.createElement('div');
         teamDiv.className = 'team';
@@ -474,7 +405,6 @@
     function generateTeamsFirst() {
       const membersText = document.getElementById('members-first').value;
       const teamCount = parseInt(document.getElementById('teamCount-first').value, 10);
-      const prefix = document.getElementById('teamPrefix-first').value || 'チーム';
       const startLabel = document.getElementById('startLabel-first').value;
 
       const members = membersText
@@ -504,7 +434,7 @@
         teams[teamIndex].push(members[i]);
       }
 
-      buildOutput(teams, prefix, startLabel);
+      buildOutput(teams, startLabel);
     }
 
     // ② 2回目以降：前回チームごとにメンバーを分配
@@ -546,7 +476,6 @@
     function generateTeamsFromPrevious() {
       const text = document.getElementById('members-next').value;
       const teamCount = parseInt(document.getElementById('teamCount-next').value, 10);
-      const prefix = document.getElementById('teamPrefix-next').value || 'チーム';
       const startLabel = document.getElementById('startLabel-next').value;
 
       if (!text.trim()) {
@@ -582,7 +511,7 @@
         }
       }
 
-      buildOutput(teams, prefix, startLabel);
+      buildOutput(teams, startLabel);
     }
 
     function copyLineText() {
