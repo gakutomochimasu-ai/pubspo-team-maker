@@ -807,23 +807,23 @@
 
   <script>
     /* ========= 共通ヘルパー ========= */
-    var billingSelections = {
+    let billingSelections = {
       venue: {},
       party1: {},
       party2: {}
     };
 
-    var categoryLabels = {
+    const categoryLabels = {
       venue: '会場代',
       party1: '懇親会（１次会）',
       party2: '懇親会（２次会）'
     };
 
     function switchMainTab(mode) {
-      var tabTeams = document.getElementById('main-tab-teams');
-      var tabBilling = document.getElementById('main-tab-billing');
-      var secTeams = document.getElementById('main-teams');
-      var secBilling = document.getElementById('main-billing');
+      const tabTeams = document.getElementById('main-tab-teams');
+      const tabBilling = document.getElementById('main-tab-billing');
+      const secTeams = document.getElementById('main-teams');
+      const secBilling = document.getElementById('main-billing');
 
       if (mode === 'teams') {
         tabTeams.classList.add('active');
@@ -836,8 +836,8 @@
         secTeams.classList.remove('active');
         secBilling.classList.add('active');
 
-        var teamsMembers = document.getElementById('members-first').value.trim();
-        var billingMembersArea = document.getElementById('members-billing');
+        const teamsMembers = document.getElementById('members-first').value.trim();
+        const billingMembersArea = document.getElementById('members-billing');
         if (billingMembersArea && !billingMembersArea.value.trim() && teamsMembers) {
           billingMembersArea.value = teamsMembers;
           rebuildBillingTable();
@@ -846,15 +846,15 @@
     }
 
     function copyText(textareaId) {
-      var textArea = document.getElementById(textareaId);
+      const textArea = document.getElementById(textareaId);
       if (!textArea) return;
       textArea.select();
       textArea.setSelectionRange(0, 99999);
 
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(textArea.value)
-          .then(function () { alert('コピーしました。'); })
-          .catch(function () {
+          .then(() => alert('コピーしました。'))
+          .catch(() => {
             document.execCommand('copy');
             alert('コピーしました。');
           });
@@ -865,30 +865,30 @@
     }
 
     function toStyledNumber(num) {
-      var n = Number(num);
-      if (!isFinite(n)) return String(num);
-      var s = String(n);
+      const n = Number(num);
+      if (!Number.isFinite(n)) return String(num);
+      const s = String(n);
       if (s.length === 1) {
-        var base = '０'.charCodeAt(0);
+        const base = '０'.charCodeAt(0);
         return String.fromCharCode(base + n);
       }
       return s;
     }
 
     function getMembersFromTextarea(id) {
-      var text = document.getElementById(id).value;
+      const text = document.getElementById(id).value;
       return text
         .split(/\r?\n/)
-        .map(function (m) { return m.trim(); })
-        .filter(function (m) { return m.length > 0; });
+        .map(m => m.trim())
+        .filter(m => m.length > 0);
     }
 
     /* ========= チーム分け ========= */
     function switchSubTab(mode) {
-      var tabFirst = document.getElementById('tab-first');
-      var tabNext = document.getElementById('tab-next');
-      var sectionFirst = document.getElementById('section-first');
-      var sectionNext = document.getElementById('section-next');
+      const tabFirst = document.getElementById('tab-first');
+      const tabNext = document.getElementById('tab-next');
+      const sectionFirst = document.getElementById('section-first');
+      const sectionNext = document.getElementById('section-next');
 
       if (mode === 'first') {
         tabFirst.classList.add('active');
@@ -904,64 +904,59 @@
     }
 
     function shuffle(array) {
-      for (var i = array.length - 1; i > 0; i--) {
-        var j = Math.floor(Math.random() * (i + 1));
-        var tmp = array[i];
-        array[i] = array[j];
-        array[j] = tmp;
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
       }
       return array;
     }
 
     function buildTeamOutput(teams, startLabel) {
-      var resultsDiv = document.getElementById('results');
-      var summaryBadge = document.getElementById('summaryBadge');
+      const resultsDiv = document.getElementById('results');
+      const summaryBadge = document.getElementById('summaryBadge');
       resultsDiv.innerHTML = '';
 
-      var totalMembers = 0;
-      for (var i = 0; i < teams.length; i++) totalMembers += teams[i].length;
-      var nonEmptyTeams = teams.filter(function(t){return t.length>0;}).length;
-      var teamCount = teams.length;
+      const totalMembers = teams.reduce((sum, t) => sum + t.length, 0);
+      const nonEmptyTeams = teams.filter(t => t.length > 0).length;
+      const teamCount = teams.length;
 
       summaryBadge.textContent =
-        toStyledNumber(totalMembers) + '人 / ' +
-        toStyledNumber(teamCount) + 'チーム（うち' +
-        toStyledNumber(nonEmptyTeams) + 'チームにメンバーあり）';
+        `${toStyledNumber(totalMembers)}人 / ${toStyledNumber(teamCount)}チーム（うち${toStyledNumber(nonEmptyTeams)}チームにメンバーあり）`;
 
-      var lineText = '【パブスポ チーム分け結果】\n\n';
+      let lineText = '【パブスポ チーム分け結果】\n\n';
 
-      for (var ti = 0; ti < teams.length; ti++) {
-        var label;
+      teams.forEach((members, i) => {
+        let label;
         if (startLabel === 'alphabet') {
-          label = String.fromCharCode('A'.charCodeAt(0) + ti);
+          label = String.fromCharCode('A'.charCodeAt(0) + i);
         } else {
-          label = toStyledNumber(ti + 1);
+          label = toStyledNumber(i + 1);
         }
-        var teamName = 'チーム' + label;
-        var count = teams[ti].length;
+        const teamName = 'チーム' + label;
+        const count = members.length;
 
-        var teamDiv = document.createElement('div');
+        const teamDiv = document.createElement('div');
         teamDiv.className = 'team';
 
-        var titleLine = document.createElement('div');
+        const titleLine = document.createElement('div');
         titleLine.className = 'team-title-line';
 
-        var title = document.createElement('div');
+        const title = document.createElement('div');
         title.className = 'team-title';
-        title.textContent = '【' + teamName + '】';
+        title.textContent = `【${teamName}】`;
 
-        var countSpan = document.createElement('div');
+        const countSpan = document.createElement('div');
         countSpan.className = 'team-count';
-        countSpan.textContent = toStyledNumber(count) + '人';
+        countSpan.textContent = `${toStyledNumber(count)}人`;
 
         titleLine.appendChild(title);
         titleLine.appendChild(countSpan);
         teamDiv.appendChild(titleLine);
 
-        var list = document.createElement('div');
+        const list = document.createElement('div');
         list.className = 'team-members';
         if (count > 0) {
-          list.innerHTML = teams[ti].join('<br>');
+          list.innerHTML = members.join('<br>');
         } else {
           list.innerHTML = '<span class="empty">（メンバーなし）</span>';
         }
@@ -969,29 +964,29 @@
 
         resultsDiv.appendChild(teamDiv);
 
-        lineText += '【' + teamName + '】\n';
+        lineText += `【${teamName}】\n`;
         if (count > 0) {
-          lineText += teams[ti].join('\n');
+          lineText += members.join('\n');
         } else {
           lineText += '（メンバーなし）';
         }
         lineText += '\n\n';
-      }
+      });
 
-      document.getElementById('lineText').value = lineText.replace(/\n+$/, '');
+      document.getElementById('lineText').value = lineText.trimEnd();
       document.getElementById('resultsSection').style.display = 'block';
     }
 
     function generateTeamsFirst() {
-      var teamCount = parseInt(document.getElementById('teamCount-first').value, 10);
-      var startLabel = document.getElementById('startLabel-first').value;
-      var members = getMembersFromTextarea('members-first');
+      const teamCount = parseInt(document.getElementById('teamCount-first').value, 10);
+      const startLabel = document.getElementById('startLabel-first').value;
+      const members = getMembersFromTextarea('members-first');
 
       if (members.length === 0) {
         alert('メンバーを1人以上入力してください。');
         return;
       }
-      if (!teamCount || teamCount <= 0) {
+      if (!Number.isInteger(teamCount) || teamCount <= 0) {
         alert('チーム数が正しくありません。');
         return;
       }
@@ -1001,60 +996,56 @@
 
       shuffle(members);
 
-      var teams = [];
-      for (var i = 0; i < teamCount; i++) teams.push([]);
-      for (var j = 0; j < members.length; j++) {
-        var idx = j % teamCount;
-        teams[idx].push(members[j]);
-      }
+      const teams = Array.from({ length: teamCount }, () => []);
+      members.forEach((m, i) => {
+        const idx = i % teamCount;
+        teams[idx].push(m);
+      });
 
       buildTeamOutput(teams, startLabel);
     }
 
     function parsePreviousTeams(text) {
-      var lines = text.split(/\r?\n/);
-      var teams = [];
-      var currentTeam = null;
+      const lines = text.split(/\r?\n/);
+      const teams = [];
+      let currentTeam = null;
 
-      for (var i = 0; i < lines.length; i++) {
-        var raw = lines[i];
-        var line = raw.trim();
-        if (!line) continue;
+      lines.forEach(raw => {
+        const line = raw.trim();
+        if (!line) return;
 
-        var match = line.match(/^【(.+?)】/);
+        const match = line.match(/^【(.+?)】/);
         if (match) {
           if (currentTeam !== null) teams.push(currentTeam.members);
           currentTeam = { name: match[1], members: [] };
-          continue;
+          return;
         }
-        if (line === '（メンバーなし）') continue;
+        if (line === '（メンバーなし）') return;
 
         if (currentTeam === null) currentTeam = { name: 'チーム', members: [] };
         currentTeam.members.push(line);
-      }
+      });
+
       if (currentTeam !== null) teams.push(currentTeam.members);
       return teams;
     }
 
     function generateTeamsFromPrevious() {
-      var text = document.getElementById('members-next').value;
-      var teamCount = parseInt(document.getElementById('teamCount-next').value, 10);
-      var startLabel = document.getElementById('startLabel-next').value;
+      const text = document.getElementById('members-next').value;
+      const teamCount = parseInt(document.getElementById('teamCount-next').value, 10);
+      const startLabel = document.getElementById('startLabel-next').value;
 
       if (!text.trim()) {
         alert('前回のチーム結果を貼り付けてください。');
         return;
       }
-      if (!teamCount || teamCount <= 0) {
+      if (!Number.isInteger(teamCount) || teamCount <= 0) {
         alert('チーム数が正しくありません。');
         return;
       }
 
-      var previousTeams = parsePreviousTeams(text);
-      var allMembers = [];
-      for (var i = 0; i < previousTeams.length; i++) {
-        allMembers = allMembers.concat(previousTeams[i]);
-      }
+      const previousTeams = parsePreviousTeams(text);
+      const allMembers = previousTeams.flat();
 
       if (allMembers.length === 0) {
         alert('メンバーが読み取れませんでした。形式を確認してください。');
@@ -1064,17 +1055,15 @@
         if (!confirm('メンバー数よりチーム数の方が多いです。それでも続けますか？')) return;
       }
 
-      var teams = [];
-      for (var t = 0; t < teamCount; t++) teams.push([]);
+      const teams = Array.from({ length: teamCount }, () => []);
 
-      for (var ti = 0; ti < previousTeams.length; ti++) {
-        var mems = previousTeams[ti].slice();
-        shuffle(mems);
-        for (var k = 0; k < mems.length; k++) {
-          var teamIndex = (ti + k) % teamCount;
-          teams[teamIndex].push(mems[k]);
-        }
-      }
+      previousTeams.forEach((members, tIndex) => {
+        const shuffled = shuffle(members.slice());
+        shuffled.forEach((name, i) => {
+          const idx = (tIndex + i) % teamCount;
+          teams[idx].push(name);
+        });
+      });
 
       buildTeamOutput(teams, startLabel);
     }
@@ -1082,8 +1071,8 @@
     /* ========= 精算 ========= */
 
     function loadMembersFromTeams() {
-      var teamsMembers = document.getElementById('members-first').value.trim();
-      var billingMembersArea = document.getElementById('members-billing');
+      const teamsMembers = document.getElementById('members-first').value.trim();
+      const billingMembersArea = document.getElementById('members-billing');
       if (!teamsMembers) {
         alert('チーム分けタブのメンバーが空です。');
         return;
@@ -1092,41 +1081,13 @@
       rebuildBillingTable();
     }
 
-    function applyBillingVisuals() {
-      var table = document.getElementById('billingTable');
-      var inputs = table.querySelectorAll('input[type="checkbox"]');
-      for (var i = 0; i < inputs.length; i++) {
-        var cb = inputs[i];
-        var name = cb.getAttribute('data-name');
-        var cat = cb.getAttribute('data-cat');
-        var td = cb.parentNode;
-        if (billingSelections[cat] && billingSelections[cat][name]) {
-          cb.checked = true;
-          td.classList.add('checked-cell');
-        } else {
-          cb.checked = false;
-          td.classList.remove('checked-cell');
-        }
-      }
-    }
-
     function rebuildBillingTable() {
-      var wrapper = document.getElementById('billingTableWrapper');
-      var table = document.getElementById('billingTable');
-      var members = getMembersFromTextarea('members-billing');
+      const wrapper = document.getElementById('billingTableWrapper');
+      const table = document.getElementById('billingTable');
+      const members = getMembersFromTextarea('members-billing');
 
-      var oldVenue = {};
-      var oldParty1 = {};
-      var oldParty2 = {};
-      var name;
-
-      for (name in billingSelections.venue) { oldVenue[name] = billingSelections.venue[name]; }
-      for (name in billingSelections.party1) { oldParty1[name] = billingSelections.party1[name]; }
-      for (name in billingSelections.party2) { oldParty2[name] = billingSelections.party2[name]; }
-
-      billingSelections.venue = {};
-      billingSelections.party1 = {};
-      billingSelections.party2 = {};
+      const oldSelections = JSON.parse(JSON.stringify(billingSelections));
+      billingSelections = { venue: {}, party1: {}, party2: {} };
 
       if (members.length === 0) {
         table.innerHTML = '';
@@ -1134,118 +1095,136 @@
         return;
       }
 
-      for (var i = 0; i < members.length; i++) {
-        name = members[i];
-        billingSelections.venue[name] = !!oldVenue[name];
-        billingSelections.party1[name] = !!oldParty1[name];
-        billingSelections.party2[name] = !!oldParty2[name];
-      }
+      members.forEach(name => {
+        billingSelections.venue[name] = !!(oldSelections.venue && oldSelections.venue[name]);
+        billingSelections.party1[name] = !!(oldSelections.party1 && oldSelections.party1[name]);
+        billingSelections.party2[name] = !!(oldSelections.party2 && oldSelections.party2[name]);
+      });
 
-      var html = '';
-      html += '<thead>';
-      html += '<tr>';
-      html += '<th>名前</th>';
-      html += '<th>会場代</th>';
-      html += '<th>懇親会（１次会）</th>';
-      html += '<th>懇親会（２次会）</th>';
-      html += '</tr>';
-      html += '<tr class="billing-bulk-row">';
-      html += '<td></td>';
-      html += '<td><div class="bulk-buttons">';
-      html += '<button type="button" class="bulk-btn" onclick="setAllBilling(\\'venue\\', true)">全員選択</button>';
-      html += '<button type="button" class="bulk-btn" onclick="setAllBilling(\\'venue\\', false)">全員解除</button>';
-      html += '</div></td>';
-      html += '<td><div class="bulk-buttons">';
-      html += '<button type="button" class="bulk-btn" onclick="setAllBilling(\\'party1\\', true)">全員選択</button>';
-      html += '<button type="button" class="bulk-btn" onclick="setAllBilling(\\'party1\\', false)">全員解除</button>';
-      html += '</div></td>';
-      html += '<td><div class="bulk-buttons">';
-      html += '<button type="button" class="bulk-btn" onclick="setAllBilling(\\'party2\\', true)">全員選択</button>';
-      html += '<button type="button" class="bulk-btn" onclick="setAllBilling(\\'party2\\', false)">全員解除</button>';
-      html += '</div></td>';
-      html += '</tr>';
-      html += '</thead><tbody>';
+      const header = `
+        <thead>
+          <tr>
+            <th>名前</th>
+            <th>会場代</th>
+            <th>懇親会（１次会）</th>
+            <th>懇親会（２次会）</th>
+          </tr>
+          <tr class="billing-bulk-row">
+            <td></td>
+            <td>
+              <div class="bulk-buttons">
+                <button type="button" class="bulk-btn" onclick="setAllBilling('venue', true)">全員選択</button>
+                <button type="button" class="bulk-btn" onclick="setAllBilling('venue', false)">全員解除</button>
+              </div>
+            </td>
+            <td>
+              <div class="bulk-buttons">
+                <button type="button" class="bulk-btn" onclick="setAllBilling('party1', true)">全員選択</button>
+                <button type="button" class="bulk-btn" onclick="setAllBilling('party1', false)">全員解除</button>
+              </div>
+            </td>
+            <td>
+              <div class="bulk-buttons">
+                <button type="button" class="bulk-btn" onclick="setAllBilling('party2', true)">全員選択</button>
+                <button type="button" class="bulk-btn" onclick="setAllBilling('party2', false)">全員解除</button>
+              </div>
+            </td>
+          </tr>
+        </thead>
+      `;
 
-      for (var r = 0; r < members.length; r++) {
-        name = members[r];
-        html += '<tr>';
-        html += '<td class="name-cell">' + name + '</td>';
+      const bodyRows = members.map(name => {
+        const venueChecked  = billingSelections.venue[name]  ? 'checked' : '';
+        const party1Checked = billingSelections.party1[name] ? 'checked' : '';
+        const party2Checked = billingSelections.party2[name] ? 'checked' : '';
 
-        ['venue', 'party1', 'party2'].forEach(function(cat){
-          var checked = billingSelections[cat][name] ? ' checked' : '';
-          html += '<td><input type="checkbox"' + checked +
-            ' data-name="' + name.replace(/"/g,'&quot;') +
-            '" data-cat="' + cat +
-            '" onchange="onBillingCheckboxChange(this)"></td>';
-        });
+        return `
+          <tr>
+            <td class="name-cell">${name}</td>
+            <td>
+              <input type="checkbox" ${venueChecked}
+                data-name="${name.replace(/"/g, '&quot;')}"
+                data-cat="venue"
+                onchange="onBillingCheckboxChange(this)">
+            </td>
+            <td>
+              <input type="checkbox" ${party1Checked}
+                data-name="${name.replace(/"/g, '&quot;')}"
+                data-cat="party1"
+                onchange="onBillingCheckboxChange(this)">
+            </td>
+            <td>
+              <input type="checkbox" ${party2Checked}
+                data-name="${name.replace(/"/g, '&quot;')}"
+                data-cat="party2"
+                onchange="onBillingCheckboxChange(this)">
+            </td>
+          </tr>
+        `;
+      }).join('');
 
-        html += '</tr>';
-      }
-
-      html += '</tbody>';
-
-      // onclick の JS 文字列で使った \\ を本物の \ に戻す
-      html = html.replace(/\\\\/g, '\\');
-
-      table.innerHTML = html;
+      table.innerHTML = header + '<tbody>' + bodyRows + '</tbody>';
       wrapper.style.display = 'block';
-      applyBillingVisuals();
+
+      // 初期表示時のハイライト反映
+      const inputs = table.querySelectorAll('input[type="checkbox"]');
+      inputs.forEach(cb => {
+        const td = cb.closest('td');
+        if (cb.checked) td.classList.add('checked-cell');
+      });
     }
 
     function onBillingCheckboxChange(checkbox) {
-      var name = checkbox.getAttribute('data-name');
-      var cat = checkbox.getAttribute('data-cat');
+      const name = checkbox.getAttribute('data-name');
+      const cat = checkbox.getAttribute('data-cat');
       if (!billingSelections[cat]) return;
       billingSelections[cat][name] = checkbox.checked;
 
-      var td = checkbox.parentNode;
-      if (checkbox.checked) td.classList.add('checked-cell');
-      else td.classList.remove('checked-cell');
+      const td = checkbox.closest('td');
+      if (!td) return;
+      if (checkbox.checked) {
+        td.classList.add('checked-cell');
+      } else {
+        td.classList.remove('checked-cell');
+      }
     }
 
     function setAllBilling(cat, checked) {
-      var table = document.getElementById('billingTable');
-      var inputs = table.querySelectorAll('input[type="checkbox"][data-cat="' + cat + '"]');
-      for (var i = 0; i < inputs.length; i++) {
-        var cb = inputs[i];
+      const table = document.getElementById('billingTable');
+      const inputs = table.querySelectorAll(`input[type="checkbox"][data-cat="${cat}"]`);
+      inputs.forEach(cb => {
         cb.checked = checked;
-        var name = cb.getAttribute('data-name');
+        const name = cb.getAttribute('data-name');
         billingSelections[cat][name] = checked;
-        var td = cb.parentNode;
+        const td = cb.closest('td');
+        if (!td) return;
         if (checked) td.classList.add('checked-cell');
         else td.classList.remove('checked-cell');
-      }
+      });
     }
 
     function getParticipantsByCategory(cat) {
-      var members = getMembersFromTextarea('members-billing');
-      var selected = [];
-      for (var i = 0; i < members.length; i++) {
-        var name = members[i];
-        if (billingSelections[cat] && billingSelections[cat][name]) {
-          selected.push(name);
-        }
-      }
-      return selected;
+      const members = getMembersFromTextarea('members-billing');
+      return members.filter(name => billingSelections[cat] && billingSelections[cat][name]);
     }
 
     function calcCategory(catKey) {
-      var totalInputId = 'totalCost-' + catKey;
-      var unitSelectId = 'roundUnit-' + catKey;
-      var resultId = 'result-' + catKey;
-      var lineId = 'lineText-' + catKey;
+      const totalInputId = 'totalCost-' + catKey;
+      const unitSelectId = 'roundUnit-' + catKey;
+      const resultId = 'result-' + catKey;
+      const lineId = 'lineText-' + catKey;
 
-      var totalStr = document.getElementById(totalInputId).value;
-      var unitStr = document.getElementById(unitSelectId).value;
-      var resultDiv = document.getElementById(resultId);
-      var lineArea = document.getElementById(lineId);
+      const totalStr = document.getElementById(totalInputId).value;
+      const unitStr = document.getElementById(unitSelectId).value;
+      const resultDiv = document.getElementById(resultId);
+      const lineArea = document.getElementById(lineId);
 
-      var totalCost = Number(totalStr);
-      var unit = Number(unitStr);
-      var participants = getParticipantsByCategory(catKey);
-      var count = participants.length;
+      const totalCost = Number(totalStr);
+      const unit = Number(unitStr);
+      const participants = getParticipantsByCategory(catKey);
+      const count = participants.length;
 
-      if (!totalCost || totalCost <= 0 || !isFinite(totalCost)) {
+      if (!totalCost || totalCost <= 0 || !Number.isFinite(totalCost)) {
         resultDiv.textContent = '総額が未入力か、0円以下です。';
         lineArea.value = '';
         return { perPerson: 0, count: 0, participants: [] };
@@ -1256,29 +1235,22 @@
         return { perPerson: 0, count: 0, participants: [] };
       }
 
-      var rawPerPerson = totalCost / count;
-      var perPerson = Math.ceil(rawPerPerson / unit) * unit;
+      const rawPerPerson = totalCost / count;
+      const perPerson = Math.ceil(rawPerPerson / unit) * unit;
 
       resultDiv.textContent =
-        categoryLabels[catKey] + '：参加 ' + toStyledNumber(count) +
-        '人 ／ 総額 ' + totalCost.toLocaleString() + '円 ／ １人あたり ' +
-        perPerson.toLocaleString() + '円（' +
-        (unit === 1 ? '１円単位' : unit + '円単位切り上げ') + '）';
+        `${categoryLabels[catKey]}：参加 ${toStyledNumber(count)}人 ／ 総額 ${totalCost.toLocaleString()}円 ／ １人あたり ${perPerson.toLocaleString()}円（${unit === 1 ? '１円単位' : unit + '円単位切り上げ'}）`;
 
-      var text = ''
-        + '【本日の精算（' + categoryLabels[catKey] + '）】\n'
-        + '参加者：' + toStyledNumber(count) + '人\n'
-        + '総額：' + totalCost.toLocaleString() + '円\n'
-        + '１人あたり：' + perPerson.toLocaleString() + '円\n\n'
-        + '※端数は' + (unit === 1 ? 'そのまま' : unit + '円単位で切り上げ') + 'にしています。';
+      const text =
+        `【本日の精算（${categoryLabels[catKey]}）】\n` +
+        `参加者：${toStyledNumber(count)}人\n` +
+        `総額：${totalCost.toLocaleString()}円\n` +
+        `１人あたり：${perPerson.toLocaleString()}円\n\n` +
+        `※端数は${unit === 1 ? 'そのまま' : unit + '円単位で切り上げ'}にしています。`;
 
       lineArea.value = text;
 
-      return {
-        perPerson: perPerson,
-        count: count,
-        participants: participants
-      };
+      return { perPerson, count, participants };
     }
 
     function calculateSettlement(catKey) {
@@ -1286,45 +1258,35 @@
     }
 
     function calculateSettlementAll() {
-      var cats = ['venue', 'party1', 'party2'];
-      var perCatResult = {};
-      for (var i = 0; i < cats.length; i++) {
-        var cat = cats[i];
+      const cats = ['venue', 'party1', 'party2'];
+      const perCatResult = {};
+      cats.forEach(cat => {
         perCatResult[cat] = calcCategory(cat);
-      }
+      });
 
-      var members = getMembersFromTextarea('members-billing');
-      var totals = {};
-      var details = {};
-      var name;
-
-      for (var m = 0; m < members.length; m++) {
-        name = members[m];
+      const members = getMembersFromTextarea('members-billing');
+      const totals = {};
+      const details = {};
+      members.forEach(name => {
         totals[name] = 0;
         details[name] = [];
-      }
+      });
 
-      for (var ci = 0; ci < cats.length; ci++) {
-        var ck = cats[ci];
-        var res = perCatResult[ck];
-        if (!res || !res.perPerson || res.perPerson <= 0 || !res.participants) continue;
-        for (var pi = 0; pi < res.participants.length; pi++) {
-          name = res.participants[pi];
-          if (!(name in totals)) continue;
+      cats.forEach(cat => {
+        const res = perCatResult[cat];
+        if (!res || !res.perPerson || res.perPerson <= 0 || !Array.isArray(res.participants)) return;
+        res.participants.forEach(name => {
+          if (!(name in totals)) return;
           totals[name] += res.perPerson;
-          details[name].push(categoryLabels[ck] + ' ' + res.perPerson.toLocaleString() + '円');
-        }
-      }
+          details[name].push(`${categoryLabels[cat]} ${res.perPerson.toLocaleString()}円`);
+        });
+      });
 
-      var namesWithTotal = [];
-      for (name in totals) {
-        if (totals[name] > 0) namesWithTotal.push(name);
-      }
-
-      var perPersonSection = document.getElementById('perPersonSection');
-      var table = document.getElementById('perPersonTable');
-      var badge = document.getElementById('perPersonBadge');
-      var lineArea = document.getElementById('lineText-perPerson');
+      const namesWithTotal = members.filter(name => totals[name] > 0);
+      const perPersonSection = document.getElementById('perPersonSection');
+      const table = document.getElementById('perPersonTable');
+      const badge = document.getElementById('perPersonBadge');
+      const lineArea = document.getElementById('lineText-perPerson');
 
       if (namesWithTotal.length === 0) {
         perPersonSection.style.display = 'none';
@@ -1333,39 +1295,44 @@
         return;
       }
 
-      badge.textContent = '合計対象：' + toStyledNumber(namesWithTotal.length) + '人';
+      badge.textContent = `合計対象：${toStyledNumber(namesWithTotal.length)}人`;
 
-      var html = '';
-      html += '<thead><tr>';
-      html += '<th>名前</th><th>合計</th><th>内訳</th>';
-      html += '</tr></thead><tbody>';
+      const bodyRows = namesWithTotal.map(name => {
+        const total = totals[name];
+        const detailStr = details[name].join('／');
+        return `
+          <tr>
+            <td class="name">${name}</td>
+            <td>${total.toLocaleString()}円</td>
+            <td>${detailStr || '-'}</td>
+          </tr>
+        `;
+      }).join('');
 
-      for (var ni = 0; ni < namesWithTotal.length; ni++) {
-        name = namesWithTotal[ni];
-        var total = totals[name];
-        var detailStr = details[name].join('／');
-
-        html += '<tr>';
-        html += '<td class="name">' + name + '</td>';
-        html += '<td>' + total.toLocaleString() + '円</td>';
-        html += '<td>' + (detailStr || '-') + '</td>';
-        html += '</tr>';
-      }
-
-      html += '</tbody>';
-      table.innerHTML = html;
+      table.innerHTML = `
+        <thead>
+          <tr>
+            <th>名前</th>
+            <th>合計</th>
+            <th>内訳</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${bodyRows}
+        </tbody>
+      `;
       perPersonSection.style.display = 'block';
 
-      var textLines = ['【本日の精算（合計）】'];
-      for (var nj = 0; nj < namesWithTotal.length; nj++) {
-        name = namesWithTotal[nj];
-        var tot = totals[name];
-        var det = details[name].join('／');
-        var line = name + '：' + tot.toLocaleString() + '円';
-        if (det) line += '（' + det + '）';
-        textLines.push(line);
-      }
-      lineArea.value = textLines.join('\n');
+      let text = '【本日の精算（合計）】\n';
+      namesWithTotal.forEach(name => {
+        const total = totals[name];
+        const detailStr = details[name].join('／');
+        text += `${name}：${total.toLocaleString()}円`;
+        if (detailStr) text += `（${detailStr}）`;
+        text += '\n';
+      });
+
+      lineArea.value = text.trimEnd();
     }
   </script>
 </body>
