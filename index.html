@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>パブスポ（Public × Sports）</title>
+  <title>パブスポ専用 チーム分けツール</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     :root {
@@ -12,6 +12,7 @@
       --gold: #ffd86b;
       --gold-strong: #f5b300;
       --gold-soft: #ffe59a;
+      --accent: #4adeff;
       --text-main: #f5f5f5;
       --text-muted: #a5acba;
       --border-subtle: #272b33;
@@ -23,7 +24,6 @@
       padding: 18px 14px 26px;
       font-family:
         "SF Pro Rounded",
-        "SF Pro Text",
         -apple-system,
         BlinkMacSystemFont,
         "Hiragino Maru Gothic ProN",
@@ -39,19 +39,20 @@
     }
 
     .app-shell {
-      max-width: 900px;
+      max-width: 720px;
       margin: 0 auto;
     }
 
     header {
       text-align: center;
-      margin-bottom: 14px;
+      margin-bottom: 16px;
     }
 
     h1 {
-      font-size: 1.4rem;
+      font-size: 1.32rem;
       margin: 0;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
       background: linear-gradient(120deg, #fff6d4, var(--gold-strong));
       -webkit-background-clip: text;
       color: transparent;
@@ -64,48 +65,6 @@
       color: var(--text-muted);
     }
 
-    /* メインタブ（チーム分け / 精算） */
-    .main-tabs {
-      display: flex;
-      gap: 6px;
-      margin: 12px 0 14px;
-      padding: 3px;
-      border-radius: 999px;
-      background: rgba(15,23,42,0.96);
-      border: 1px solid rgba(148,163,184,0.5);
-      box-shadow: 0 12px 30px rgba(0,0,0,0.65);
-    }
-    .main-tab {
-      flex: 1;
-      text-align: center;
-      padding: 8px 10px;
-      font-size: 0.85rem;
-      border-radius: 999px;
-      cursor: pointer;
-      user-select: none;
-      color: var(--text-muted);
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      transition: background 0.15s ease-out, color 0.15s ease-out, box-shadow 0.15s ease-out, transform 0.08s ease-out;
-    }
-    .main-tab-icon {
-      font-size: 1rem;
-    }
-    .main-tab.active {
-      background: radial-gradient(circle at top left, #fff8da 0, var(--gold-strong) 55%, #f97316 100%);
-      color: #111318;
-      font-weight: 700;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.85);
-      transform: translateY(-1px);
-    }
-
-    .main-section { display: none; }
-    .main-section.active { display: block; }
-
-    /* 共通カード */
     .card {
       background: radial-gradient(circle at top left, #161926, #070910);
       border-radius: 22px;
@@ -117,9 +76,7 @@
       position: relative;
       overflow: hidden;
     }
-    .card + .card {
-      margin-top: 14px;
-    }
+
     .card::before,
     .card::after {
       content: "";
@@ -143,22 +100,9 @@
       bottom: -30px;
       left: -30px;
     }
-    .card-inner { position: relative; z-index: 1; }
-
-    .card-title-row {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 4px;
-      font-size: 0.9rem;
-      font-weight: 700;
-      color: var(--gold-soft);
-    }
-    .card-title-row .icon { font-size: 1rem; }
-    .card-title-sub {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      margin-bottom: 8px;
+    .card-inner {
+      position: relative;
+      z-index: 1;
     }
 
     label {
@@ -187,6 +131,7 @@
       min-height: 110px;
       resize: vertical;
     }
+
     textarea::placeholder {
       color: rgba(156,163,175,0.85);
     }
@@ -203,7 +148,11 @@
       background-repeat: no-repeat;
     }
 
-    .row { display: flex; gap: 8px; margin-top: 4px; }
+    .row {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
     .row > * { flex: 1; }
 
     button {
@@ -227,7 +176,9 @@
         0 11px 25px rgba(0,0,0,0.8),
         0 0 0 1px rgba(0,0,0,0.4);
     }
-    .primary span.icon { margin-right: 4px; }
+    .primary span.icon {
+      margin-right: 4px;
+    }
     .primary:active {
       transform: translateY(1px) scale(0.99);
       box-shadow: 0 5px 14px rgba(0,0,0,0.8);
@@ -244,22 +195,6 @@
       opacity: 0.9;
     }
 
-    .ghost {
-      background: transparent;
-      color: var(--text-muted);
-      border: 1px dashed rgba(148,163,184,0.7);
-      font-size: 0.8rem;
-      padding: 7px 10px;
-      width: auto;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      margin-top: 8px;
-    }
-    .ghost span.icon { font-size: 0.9rem; }
-
-    /* チーム分け内のタブ */
     .tabs {
       display: flex;
       border-radius: 999px;
@@ -269,6 +204,7 @@
       margin-top: 2px;
       border: 1px solid rgba(148,163,184,0.5);
     }
+
     .tab {
       flex: 1;
       text-align: center;
@@ -296,7 +232,9 @@
       font-size: 0.7rem;
       flex-shrink: 0;
     }
-    .tab-label { text-align: left; }
+    .tab-label {
+      text-align: left;
+    }
     .tab.active {
       background: radial-gradient(circle at top left, #fff8da 0, var(--gold-strong) 55%, #f97316 100%);
       color: #111318;
@@ -319,7 +257,7 @@
     }
 
     .results {
-      margin-top: 10px;
+      margin-top: 18px;
       padding: 12px;
       border-radius: 16px;
       background: radial-gradient(circle at top left, #1f2937, #020617);
@@ -341,7 +279,9 @@
       align-items: center;
       gap: 6px;
     }
-    .results-header span.icon { font-size: 0.98rem; }
+    .results-header span.icon {
+      font-size: 0.98rem;
+    }
     .results-badge {
       font-size: 0.72rem;
       padding: 2px 8px;
@@ -382,146 +322,8 @@
       font-size: 0.8rem;
     }
 
-    .line-label { margin-top: 10px; }
-
-    /* 精算テーブル周り */
-    .billing-controls {
-      margin-top: 8px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-    .billing-table-wrapper {
+    .line-label {
       margin-top: 10px;
-      overflow-x: auto;
-      border-radius: 12px;
-      border: 1px solid rgba(55,65,81,0.8);
-      background: radial-gradient(circle at top left, #0f172a, #020617);
-    }
-    .billing-table {
-      width: 100%;
-      min-width: 360px;
-      border-collapse: collapse;
-      font-size: 0.8rem;
-    }
-    .billing-table th,
-    .billing-table td {
-      border-bottom: 1px solid rgba(55,65,81,0.8);
-      padding: 6px 8px;
-      text-align: center;
-      white-space: nowrap;
-    }
-    .billing-table th {
-      background: rgba(15,23,42,0.95);
-      position: sticky;
-      top: 0;
-      z-index: 1;
-    }
-    .billing-table td.name-cell {
-      text-align: left;
-      font-weight: 600;
-    }
-    .billing-bulk-row {
-      background: rgba(17,24,39,0.95);
-    }
-    .bulk-buttons {
-      display: flex;
-      justify-content: center;
-      gap: 4px;
-      flex-wrap: wrap;
-    }
-    .bulk-btn {
-      border-radius: 999px;
-      border: 1px solid rgba(148,163,184,0.7);
-      background: transparent;
-      color: #e5e7eb;
-      font-size: 0.7rem;
-      padding: 2px 6px;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-    .bulk-btn:active {
-      transform: translateY(1px) scale(0.98);
-      opacity: 0.9;
-    }
-
-    .billing-table input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
-      transform: scale(1.1);
-      accent-color: var(--gold-strong);
-      cursor: pointer;
-    }
-
-    .billing-table td.checked-cell {
-      background: radial-gradient(circle at top, rgba(250,204,21,0.28), rgba(15,23,42,0.9));
-      box-shadow:
-        inset 0 0 0 1px rgba(250,204,21,0.55),
-        0 0 0 1px rgba(15,23,42,0.8);
-    }
-
-    .mini-note {
-      font-size: 0.73rem;
-      color: var(--text-muted);
-      margin-top: 4px;
-    }
-
-    .billing-columns {
-      display: grid;
-      grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
-      gap: 10px;
-      margin-top: 10px;
-    }
-    .billing-col {
-      border-radius: 14px;
-      border: 1px solid rgba(148,163,184,0.6);
-      padding: 8px 10px 10px;
-      background: radial-gradient(circle at top left, #111827, #020617);
-    }
-    .billing-col-title {
-      font-size: 0.82rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      color: var(--gold-soft);
-      margin-bottom: 4px;
-    }
-    .billing-col-title span.icon { font-size: 0.9rem; }
-    .billing-result {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-top: 4px;
-      min-height: 1.2em;
-    }
-
-    .per-person-wrapper { margin-top: 10px; }
-    .per-person-table-wrapper {
-      margin-top: 6px;
-      overflow-x: auto;
-      border-radius: 12px;
-      border: 1px solid rgba(55,65,81,0.8);
-      background: radial-gradient(circle at top left, #020617, #020617);
-    }
-    .per-person-table {
-      width: 100%;
-      min-width: 360px;
-      border-collapse: collapse;
-      font-size: 0.8rem;
-    }
-    .per-person-table th,
-    .per-person-table td {
-      border-bottom: 1px solid rgba(55,65,81,0.8);
-      padding: 6px 8px;
-      text-align: center;
-      white-space: nowrap;
-    }
-    .per-person-table th {
-      background: rgba(15,23,42,0.9);
-    }
-    .per-person-table td.name {
-      text-align: left;
-      font-weight: 600;
     }
 
     .footer-note {
@@ -533,362 +335,130 @@
 
     @media (min-width: 640px) {
       body { padding: 24px 16px 32px; }
-      header { margin-bottom: 18px; }
-      h1 { font-size: 1.5rem; }
+      header { margin-bottom: 20px; }
+      h1 { font-size: 1.4rem; }
       .card { padding: 18px 18px 20px; }
       button { font-size: 1rem; }
       .tab { font-size: 0.8rem; }
-      .main-tab { font-size: 0.9rem; }
     }
   </style>
 </head>
 <body>
   <div class="app-shell">
     <header>
-      <h1>パブスポ（Public × Sports）</h1>
-      <div class="subtitle">チーム分けと精算をスマホ１つで</div>
+      <h1>パブスポ専用 チーム分けツール</h1>
+      <div class="subtitle">1回目：人数をランダム分配 ／ 2回目以降：前回チームから再分配</div>
     </header>
 
-    <!-- メインタブ -->
-    <div class="main-tabs">
-      <div class="main-tab active" id="main-tab-teams" onclick="switchMainTab('teams')">
-        <span class="main-tab-icon">🏅</span><span>チーム分け</span>
-      </div>
-      <div class="main-tab" id="main-tab-billing" onclick="switchMainTab('billing')">
-        <span class="main-tab-icon">💰</span><span>精算</span>
-      </div>
-    </div>
-
-    <!-- 🏅 チーム分けセクション -->
-    <div id="main-teams" class="main-section active">
-      <div class="card">
-        <div class="card-inner">
-          <div class="card-title-row">
-            <span class="icon">🏅</span>
-            <span>チーム分け</span>
+    <div class="card">
+      <div class="card-inner">
+        <div class="tabs">
+          <div class="tab active" id="tab-first" onclick="switchMode('first')">
+            <div class="tab-number">1</div>
+            <div class="tab-label">初回（個人リスト→チーム）</div>
           </div>
-          <div class="card-title-sub">
-            1回目はメンバー一覧からランダムに分配、2回目以降は前回のチームをバラしながら再分配します。
-          </div>
-
-          <div class="tabs">
-            <div class="tab active" id="tab-first" onclick="switchSubTab('first')">
-              <div class="tab-number">１</div>
-              <div class="tab-label">初回（個人リスト→チーム）</div>
-            </div>
-            <div class="tab" id="tab-next" onclick="switchSubTab('next')">
-              <div class="tab-number">２</div>
-              <div class="tab-label">2回目以降（前回チーム→新チーム）</div>
-            </div>
-          </div>
-
-          <!-- 初回モード -->
-          <section id="section-first" class="section active">
-            <label for="members-first">メンバー</label>
-            <textarea id="members-first" placeholder="1行につき1人ずつ入力してください"></textarea>
-
-            <label for="teamCount-first">チーム数</label>
-            <select id="teamCount-first">
-              <option value="2">２チーム</option>
-              <option value="3">３チーム</option>
-              <option value="4">４チーム</option>
-              <option value="5">５チーム</option>
-              <option value="6">６チーム</option>
-              <option value="7">７チーム</option>
-              <option value="8">８チーム</option>
-              <option value="9">９チーム</option>
-              <option value="10">10チーム</option>
-            </select>
-
-            <div class="row">
-              <div>
-                <label for="startLabel-first">チーム番号の開始</label>
-                <select id="startLabel-first">
-                  <option value="number">１, ２, ３...</option>
-                  <option value="alphabet">A, B, C...</option>
-                </select>
-              </div>
-            </div>
-
-            <button class="primary" onclick="generateTeamsFirst()">
-              <span class="icon">🎲</span>ランダムでチーム分けする
-            </button>
-          </section>
-
-          <!-- 2回目以降モード -->
-          <section id="section-next" class="section">
-            <label for="members-next">前回のチーム結果を貼り付け</label>
-            <textarea id="members-next" placeholder="このツールが出した「LINE投稿用テキスト」か、同じ形式のテキストを貼り付けてください。"></textarea>
-
-            <label for="teamCount-next">今回のチーム数</label>
-            <select id="teamCount-next">
-              <option value="2">２チーム</option>
-              <option value="3">３チーム</option>
-              <option value="4">４チーム</option>
-              <option value="5">５チーム</option>
-              <option value="6">６チーム</option>
-              <option value="7">７チーム</option>
-              <option value="8">８チーム</option>
-              <option value="9">９チーム</option>
-              <option value="10">10チーム</option>
-            </select>
-
-            <div class="row">
-              <div>
-                <label for="startLabel-next">チーム番号の開始</label>
-                <select id="startLabel-next">
-                  <option value="number">１, ２, ３...</option>
-                  <option value="alphabet">A, B, C...</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="note">
-              ロジック：前回の各チームごとのメンバーを、今回のチーム数に応じてできるだけバラけるように振り分けます。
-            </div>
-
-            <button class="primary" onclick="generateTeamsFromPrevious()">
-              <span class="icon">🔁</span>前回のチームから再分配する
-            </button>
-          </section>
-
-          <section id="resultsSection" class="results" style="display:none;">
-            <div class="results-header">
-              <div class="results-header-left">
-                <span class="icon">🏅</span>
-                <span>チーム分け結果</span>
-              </div>
-              <div class="results-badge" id="summaryBadge"></div>
-            </div>
-            <div id="results"></div>
-
-            <label class="line-label" for="lineText">LINE投稿用テキスト</label>
-            <textarea id="lineText" readonly></textarea>
-            <button class="secondary" onclick="copyText('lineText')">LINE用テキストをコピー</button>
-          </section>
-
-          <div class="footer-note">
-            Powered by Pubspo team / GitHub Pages
+          <div class="tab" id="tab-next" onclick="switchMode('next')">
+            <div class="tab-number">2</div>
+            <div class="tab-label">2回目以降（前回チーム→新チーム）</div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <!-- 💰 精算セクション -->
-    <div id="main-billing" class="main-section">
-      <div class="card">
-        <div class="card-inner">
-          <div class="card-title-row">
-            <span class="icon">💰</span>
-            <span>精算ツール</span>
-          </div>
-          <div class="card-title-sub">
-            メンバーを共通で管理しながら、会場代・懇親会（１次／２次）の精算を行い、一人ごとの合計も自動計算します。
-          </div>
+        <!-- 初回モード -->
+        <section id="section-first" class="section active">
+          <label for="members-first">メンバー</label>
+          <textarea id="members-first" placeholder="1行につき1人ずつ入力してください"></textarea>
 
-          <!-- 共通メンバー -->
-          <label for="members-billing">メンバー（パブスポ参加者全員）</label>
-          <textarea id="members-billing" placeholder="1行につき1人ずつ入力してください"></textarea>
+          <label for="teamCount-first">チーム数</label>
+          <select id="teamCount-first">
+            <option value="2">2チーム</option>
+            <option value="3">3チーム</option>
+            <option value="4">4チーム</option>
+            <option value="5">5チーム</option>
+            <option value="6">6チーム</option>
+          </select>
 
-          <div class="billing-controls">
-            <button type="button" class="ghost" onclick="loadMembersFromTeams()">
-              <span class="icon">📥</span><span>チーム分けのメンバーを読み込む</span>
-            </button>
-            <button type="button" class="ghost" onclick="rebuildBillingTable()">
-              <span class="icon">🔄</span><span>メンバー一覧から表を更新</span>
-            </button>
-          </div>
-          <div class="mini-note">
-            ※ メンバーを編集したら「表を更新」を押してください。会場代・懇親会ごとに参加者をチェックで選べます。
-          </div>
-
-          <!-- 参加区分チェックテーブル -->
-          <div class="billing-table-wrapper" id="billingTableWrapper" style="display:none;">
-            <table class="billing-table" id="billingTable"></table>
-          </div>
-
-          <div class="mini-note">
-            「会場代」「懇親会（１次／２次）」ごとに「全員選択／全員解除」ボタンも使えます。
-          </div>
-
-          <!-- カテゴリ別精算 -->
-          <div class="billing-columns">
-            <!-- 会場代 -->
-            <div class="billing-col">
-              <div class="billing-col-title">
-                <span class="icon">🏟</span><span>会場代</span>
-              </div>
-              <label for="totalCost-venue">総額（円）</label>
-              <input id="totalCost-venue" type="number" inputmode="numeric" placeholder="例：8000">
-              <label for="roundUnit-venue">端数処理</label>
-              <select id="roundUnit-venue">
-                <option value="1">１円単位</option>
-                <option value="10">１０円単位（切り上げ）</option>
-                <option value="100" selected>１００円単位（切り上げ）</option>
+          <div class="row">
+            <div>
+              <label for="startLabel-first">チーム番号の開始</label>
+              <select id="startLabel-first">
+                <option value="number">1, 2, 3...</option>
+                <option value="alphabet">A, B, C...</option>
               </select>
-              <button class="secondary" onclick="calculateSettlement('venue')">会場代だけ計算</button>
-              <div id="result-venue" class="billing-result"></div>
-              <label class="line-label" for="lineText-venue">LINE投稿用テキスト（会場代）</label>
-              <textarea id="lineText-venue" readonly></textarea>
-              <button class="secondary" onclick="copyText('lineText-venue')">会場代テキストをコピー</button>
-            </div>
-
-            <!-- 懇親会 1次 -->
-            <div class="billing-col">
-              <div class="billing-col-title">
-                <span class="icon">🍻</span><span>懇親会（１次会）</span>
-              </div>
-              <label for="totalCost-party1">総額（円）</label>
-              <input id="totalCost-party1" type="number" inputmode="numeric" placeholder="例：12000">
-              <label for="roundUnit-party1">端数処理</label>
-              <select id="roundUnit-party1">
-                <option value="1">１円単位</option>
-                <option value="10">１０円単位（切り上げ）</option>
-                <option value="100" selected>１００円単位（切り上げ）</option>
-              </select>
-              <button class="secondary" onclick="calculateSettlement('party1')">１次会だけ計算</button>
-              <div id="result-party1" class="billing-result"></div>
-              <label class="line-label" for="lineText-party1">LINE投稿用テキスト（１次会）</label>
-              <textarea id="lineText-party1" readonly></textarea>
-              <button class="secondary" onclick="copyText('lineText-party1')">１次会テキストをコピー</button>
-            </div>
-
-            <!-- 懇親会 2次 -->
-            <div class="billing-col">
-              <div class="billing-col-title">
-                <span class="icon">🍶</span><span>懇親会（２次会）</span>
-              </div>
-              <label for="totalCost-party2">総額（円）</label>
-              <input id="totalCost-party2" type="number" inputmode="numeric" placeholder="例：6000">
-              <label for="roundUnit-party2">端数処理</label>
-              <select id="roundUnit-party2">
-                <option value="1">１円単位</option>
-                <option value="10">１０円単位（切り上げ）</option>
-                <option value="100" selected>１００円単位（切り上げ）</option>
-              </select>
-              <button class="secondary" onclick="calculateSettlement('party2')">２次会だけ計算</button>
-              <div id="result-party2" class="billing-result"></div>
-              <label class="line-label" for="lineText-party2">LINE投稿用テキスト（２次会）</label>
-              <textarea id="lineText-party2" readonly></textarea>
-              <button class="secondary" onclick="copyText('lineText-party2')">２次会テキストをコピー</button>
             </div>
           </div>
 
-          <button class="primary" onclick="calculateSettlementAll()">
-            <span class="icon">🧮</span>すべて計算して一人ごとの合計を出す
+          <button class="primary" onclick="generateTeamsFirst()">
+            <span class="icon">🎲</span>ランダムでチーム分けする
           </button>
+        </section>
 
-          <!-- 一人ごとの合計 -->
-          <div class="per-person-wrapper results" id="perPersonSection" style="display:none;">
-            <div class="results-header">
-              <div class="results-header-left">
-                <span class="icon">📋</span>
-                <span>一人ごとの合計</span>
-              </div>
-              <div class="results-badge" id="perPersonBadge"></div>
+        <!-- 2回目以降モード -->
+        <section id="section-next" class="section">
+          <label for="members-next">前回のチーム結果を貼り付け</label>
+          <textarea id="members-next" placeholder="このツールが出した「LINE投稿用テキスト」か、同じ形式のテキストを貼り付けてください。"></textarea>
+
+          <label for="teamCount-next">今回のチーム数</label>
+          <select id="teamCount-next">
+            <option value="2">2チーム</option>
+            <option value="3">3チーム</option>
+            <option value="4">4チーム</option>
+            <option value="5">5チーム</option>
+            <option value="6">6チーム</option>
+          </select>
+
+          <div class="row">
+            <div>
+              <label for="startLabel-next">チーム番号の開始</label>
+              <select id="startLabel-next">
+                <option value="number">1, 2, 3...</option>
+                <option value="alphabet">A, B, C...</option>
+              </select>
             </div>
-
-            <div class="per-person-table-wrapper">
-              <table class="per-person-table" id="perPersonTable"></table>
-            </div>
-
-            <label class="line-label" for="lineText-perPerson">LINE投稿用テキスト（個別精算）</label>
-            <textarea id="lineText-perPerson" readonly></textarea>
-            <button class="secondary" onclick="copyText('lineText-perPerson')">個別精算テキストをコピー</button>
           </div>
 
-          <div class="footer-note">
-            精算はイベントごとに更新してご利用ください。
+          <div class="note">
+            ロジック：前回の各チームごとのメンバーを、今回のチーム数に応じて<br>
+            できるだけバラけるように順番に振り分けます（同じ顔ぶれを減らすイメージ）。
           </div>
+
+          <button class="primary" onclick="generateTeamsFromPrevious()">
+            <span class="icon">🔁</span>前回のチームから再分配する
+          </button>
+        </section>
+
+        <section id="resultsSection" class="results" style="display:none;">
+          <div class="results-header">
+            <div class="results-header-left">
+              <span class="icon">🏅</span>
+              <span>チーム分け結果</span>
+            </div>
+            <div class="results-badge" id="summaryBadge"></div>
+          </div>
+          <div id="results"></div>
+
+          <label class="line-label" for="lineText">LINE投稿用テキスト</label>
+          <textarea id="lineText" readonly></textarea>
+          <button class="secondary" onclick="copyLineText()">LINE用テキストをコピー</button>
+        </section>
+
+        <div class="footer-note">
+          Powered by Pubspo team / GitHub Pages
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    /* ========= 共通ヘルパー ========= */
-    let billingSelections = {
-      venue: {},
-      party1: {},
-      party2: {}
-    };
-
-    const categoryLabels = {
-      venue: '会場代',
-      party1: '懇親会（１次会）',
-      party2: '懇親会（２次会）'
-    };
-
-    function switchMainTab(mode) {
-      const tabTeams = document.getElementById('main-tab-teams');
-      const tabBilling = document.getElementById('main-tab-billing');
-      const secTeams = document.getElementById('main-teams');
-      const secBilling = document.getElementById('main-billing');
-
-      if (mode === 'teams') {
-        tabTeams.classList.add('active');
-        tabBilling.classList.remove('active');
-        secTeams.classList.add('active');
-        secBilling.classList.remove('active');
-      } else {
-        tabTeams.classList.remove('active');
-        tabBilling.classList.add('active');
-        secTeams.classList.remove('active');
-        secBilling.classList.add('active');
-
-        const teamsMembers = document.getElementById('members-first').value.trim();
-        const billingMembersArea = document.getElementById('members-billing');
-        if (billingMembersArea && !billingMembersArea.value.trim() && teamsMembers) {
-          billingMembersArea.value = teamsMembers;
-          rebuildBillingTable();
-        }
-      }
+    // 数値チェックをシンプルに（古いブラウザ対策）
+    function isPositiveInteger(n) {
+      return typeof n === 'number' && isFinite(n) && Math.floor(n) === n && n > 0;
     }
 
-    function copyText(textareaId) {
-      const textArea = document.getElementById(textareaId);
-      if (!textArea) return;
-      textArea.select();
-      textArea.setSelectionRange(0, 99999);
-
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(textArea.value)
-          .then(() => alert('コピーしました。'))
-          .catch(() => {
-            document.execCommand('copy');
-            alert('コピーしました。');
-          });
-      } else {
-        document.execCommand('copy');
-        alert('コピーしました。');
-      }
-    }
-
-    function toStyledNumber(num) {
-      const n = Number(num);
-      if (!Number.isFinite(n)) return String(num);
-      const s = String(n);
-      if (s.length === 1) {
-        const base = '０'.charCodeAt(0);
-        return String.fromCharCode(base + n);
-      }
-      return s;
-    }
-
-    function getMembersFromTextarea(id) {
-      const text = document.getElementById(id).value;
-      return text
-        .split(/\r?\n/)
-        .map(m => m.trim())
-        .filter(m => m.length > 0);
-    }
-
-    /* ========= チーム分け ========= */
-    function switchSubTab(mode) {
-      const tabFirst = document.getElementById('tab-first');
-      const tabNext = document.getElementById('tab-next');
-      const sectionFirst = document.getElementById('section-first');
-      const sectionNext = document.getElementById('section-next');
+    function switchMode(mode) {
+      var tabFirst = document.getElementById('tab-first');
+      var tabNext = document.getElementById('tab-next');
+      var sectionFirst = document.getElementById('section-first');
+      var sectionNext = document.getElementById('section-next');
 
       if (mode === 'first') {
         tabFirst.classList.add('active');
@@ -904,59 +474,66 @@
     }
 
     function shuffle(array) {
-      for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
+      for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var tmp = array[i];
+        array[i] = array[j];
+        array[j] = tmp;
       }
       return array;
     }
 
-    function buildTeamOutput(teams, startLabel) {
-      const resultsDiv = document.getElementById('results');
-      const summaryBadge = document.getElementById('summaryBadge');
+    function buildOutput(teams, startLabel) {
+      var resultsDiv = document.getElementById('results');
+      var summaryBadge = document.getElementById('summaryBadge');
       resultsDiv.innerHTML = '';
 
-      const totalMembers = teams.reduce((sum, t) => sum + t.length, 0);
-      const nonEmptyTeams = teams.filter(t => t.length > 0).length;
-      const teamCount = teams.length;
+      var totalMembers = 0;
+      for (var i = 0; i < teams.length; i++) {
+        totalMembers += teams[i].length;
+      }
+      var nonEmptyTeams = 0;
+      for (var j = 0; j < teams.length; j++) {
+        if (teams[j].length > 0) nonEmptyTeams++;
+      }
 
       summaryBadge.textContent =
-        `${toStyledNumber(totalMembers)}人 / ${toStyledNumber(teamCount)}チーム（うち${toStyledNumber(nonEmptyTeams)}チームにメンバーあり）`;
+        totalMembers + '人 / ' + teams.length + 'チーム（うち' + nonEmptyTeams + 'チームにメンバーあり）';
 
-      let lineText = '【パブスポ チーム分け結果】\n\n';
+      var lineText = '【パブスポ チーム分け結果】\n\n';
 
-      teams.forEach((members, i) => {
-        let label;
+      for (var k = 0; k < teams.length; k++) {
+        var label;
         if (startLabel === 'alphabet') {
-          label = String.fromCharCode('A'.charCodeAt(0) + i);
+          label = String.fromCharCode('A'.charCodeAt(0) + k);
         } else {
-          label = toStyledNumber(i + 1);
+          label = (k + 1).toString();
         }
-        const teamName = 'チーム' + label;
-        const count = members.length;
+        var teamName = 'チーム' + label;
+        var count = teams[k].length;
 
-        const teamDiv = document.createElement('div');
+        var teamDiv = document.createElement('div');
         teamDiv.className = 'team';
 
-        const titleLine = document.createElement('div');
+        var titleLine = document.createElement('div');
         titleLine.className = 'team-title-line';
 
-        const title = document.createElement('div');
+        var title = document.createElement('div');
         title.className = 'team-title';
-        title.textContent = `【${teamName}】`;
+        title.textContent = '【' + teamName + '】';
 
-        const countSpan = document.createElement('div');
+        var countSpan = document.createElement('div');
         countSpan.className = 'team-count';
-        countSpan.textContent = `${toStyledNumber(count)}人`;
+        countSpan.textContent = count + '人';
 
         titleLine.appendChild(title);
         titleLine.appendChild(countSpan);
         teamDiv.appendChild(titleLine);
 
-        const list = document.createElement('div');
+        var list = document.createElement('div');
         list.className = 'team-members';
         if (count > 0) {
-          list.innerHTML = members.join('<br>');
+          list.innerHTML = teams[k].join('<br>');
         } else {
           list.innerHTML = '<span class="empty">（メンバーなし）</span>';
         }
@@ -964,375 +541,171 @@
 
         resultsDiv.appendChild(teamDiv);
 
-        lineText += `【${teamName}】\n`;
+        lineText += '【' + teamName + '】\n';
         if (count > 0) {
-          lineText += members.join('\n');
+          lineText += teams[k].join('\n');
         } else {
           lineText += '（メンバーなし）';
         }
         lineText += '\n\n';
-      });
+      }
 
-      document.getElementById('lineText').value = lineText.trimEnd();
+      document.getElementById('lineText').value = lineText.replace(/\n+$/, '');
       document.getElementById('resultsSection').style.display = 'block';
     }
 
+    // ① 初回：個人リストからランダムで分配
     function generateTeamsFirst() {
-      const teamCount = parseInt(document.getElementById('teamCount-first').value, 10);
-      const startLabel = document.getElementById('startLabel-first').value;
-      const members = getMembersFromTextarea('members-first');
+      var membersText = document.getElementById('members-first').value;
+      var teamCount = parseInt(document.getElementById('teamCount-first').value, 10);
+      var startLabel = document.getElementById('startLabel-first').value;
+
+      var rawLines = membersText.split(/\r?\n/);
+      var members = [];
+      for (var i = 0; i < rawLines.length; i++) {
+        var m = rawLines[i].trim();
+        if (m.length > 0) members.push(m);
+      }
 
       if (members.length === 0) {
         alert('メンバーを1人以上入力してください。');
         return;
       }
-      if (!Number.isInteger(teamCount) || teamCount <= 0) {
+      if (!isPositiveInteger(teamCount)) {
         alert('チーム数が正しくありません。');
         return;
       }
       if (teamCount > members.length) {
-        if (!confirm('メンバー数よりチーム数の方が多いです。それでも続けますか？')) return;
+        if (!confirm('メンバー数よりチーム数の方が多いです。それでも続けますか？')) {
+          return;
+        }
       }
 
       shuffle(members);
 
-      const teams = Array.from({ length: teamCount }, () => []);
-      members.forEach((m, i) => {
-        const idx = i % teamCount;
-        teams[idx].push(m);
-      });
+      var teams = [];
+      for (var t = 0; t < teamCount; t++) {
+        teams.push([]);
+      }
+      for (var idx = 0; idx < members.length; idx++) {
+        var teamIndex = idx % teamCount;
+        teams[teamIndex].push(members[idx]);
+      }
 
-      buildTeamOutput(teams, startLabel);
+      buildOutput(teams, startLabel);
     }
 
+    // ② 2回目以降：前回チームごとにメンバーを分配
     function parsePreviousTeams(text) {
-      const lines = text.split(/\r?\n/);
-      const teams = [];
-      let currentTeam = null;
+      var lines = text.split(/\r?\n/);
+      var teams = [];
+      var currentTeam = null;
 
-      lines.forEach(raw => {
-        const line = raw.trim();
-        if (!line) return;
+      for (var i = 0; i < lines.length; i++) {
+        var line = lines[i].trim();
+        if (line.length === 0) continue;
 
-        const match = line.match(/^【(.+?)】/);
+        var match = line.match(/^【(.+?)】/);
         if (match) {
-          if (currentTeam !== null) teams.push(currentTeam.members);
+          if (currentTeam !== null) {
+            teams.push(currentTeam.members);
+          }
           currentTeam = { name: match[1], members: [] };
-          return;
+          continue;
         }
-        if (line === '（メンバーなし）') return;
 
-        if (currentTeam === null) currentTeam = { name: 'チーム', members: [] };
-        currentTeam.members.push(line);
-      });
+        if (line === '（メンバーなし）') {
+          continue;
+        } else {
+          if (currentTeam === null) {
+            currentTeam = { name: 'チーム', members: [] };
+          }
+          currentTeam.members.push(line);
+        }
+      }
 
-      if (currentTeam !== null) teams.push(currentTeam.members);
+      if (currentTeam !== null) {
+        teams.push(currentTeam.members);
+      }
+
       return teams;
     }
 
     function generateTeamsFromPrevious() {
-      const text = document.getElementById('members-next').value;
-      const teamCount = parseInt(document.getElementById('teamCount-next').value, 10);
-      const startLabel = document.getElementById('startLabel-next').value;
+      var text = document.getElementById('members-next').value;
+      var teamCount = parseInt(document.getElementById('teamCount-next').value, 10);
+      var startLabel = document.getElementById('startLabel-next').value;
 
-      if (!text.trim()) {
+      if (!text || text.replace(/\s/g, '').length === 0) {
         alert('前回のチーム結果を貼り付けてください。');
         return;
       }
-      if (!Number.isInteger(teamCount) || teamCount <= 0) {
+      if (!isPositiveInteger(teamCount)) {
         alert('チーム数が正しくありません。');
         return;
       }
 
-      const previousTeams = parsePreviousTeams(text);
-      const allMembers = previousTeams.flat();
+      var previousTeams = parsePreviousTeams(text);
+
+      // flat() を使わずに手動でフラット化
+      var allMembers = [];
+      for (var i = 0; i < previousTeams.length; i++) {
+        var team = previousTeams[i];
+        for (var j = 0; j < team.length; j++) {
+          allMembers.push(team[j]);
+        }
+      }
 
       if (allMembers.length === 0) {
         alert('メンバーが読み取れませんでした。形式を確認してください。');
         return;
       }
       if (teamCount > allMembers.length) {
-        if (!confirm('メンバー数よりチーム数の方が多いです。それでも続けますか？')) return;
+        if (!confirm('メンバー数よりチーム数の方が多いです。それでも続けますか？')) {
+          return;
+        }
       }
 
-      const teams = Array.from({ length: teamCount }, () => []);
-
-      previousTeams.forEach((members, tIndex) => {
-        const shuffled = shuffle(members.slice());
-        shuffled.forEach((name, i) => {
-          const idx = (tIndex + i) % teamCount;
-          teams[idx].push(name);
-        });
-      });
-
-      buildTeamOutput(teams, startLabel);
-    }
-
-    /* ========= 精算 ========= */
-
-    function loadMembersFromTeams() {
-      const teamsMembers = document.getElementById('members-first').value.trim();
-      const billingMembersArea = document.getElementById('members-billing');
-      if (!teamsMembers) {
-        alert('チーム分けタブのメンバーが空です。');
-        return;
-      }
-      billingMembersArea.value = teamsMembers;
-      rebuildBillingTable();
-    }
-
-    function rebuildBillingTable() {
-      const wrapper = document.getElementById('billingTableWrapper');
-      const table = document.getElementById('billingTable');
-      const members = getMembersFromTextarea('members-billing');
-
-      const oldSelections = JSON.parse(JSON.stringify(billingSelections));
-      billingSelections = { venue: {}, party1: {}, party2: {} };
-
-      if (members.length === 0) {
-        table.innerHTML = '';
-        wrapper.style.display = 'none';
-        return;
+      var teams = [];
+      for (var t = 0; t < teamCount; t++) {
+        teams.push([]);
       }
 
-      members.forEach(name => {
-        billingSelections.venue[name] = !!(oldSelections.venue && oldSelections.venue[name]);
-        billingSelections.party1[name] = !!(oldSelections.party1 && oldSelections.party1[name]);
-        billingSelections.party2[name] = !!(oldSelections.party2 && oldSelections.party2[name]);
-      });
-
-      const header = `
-        <thead>
-          <tr>
-            <th>名前</th>
-            <th>会場代</th>
-            <th>懇親会（１次会）</th>
-            <th>懇親会（２次会）</th>
-          </tr>
-          <tr class="billing-bulk-row">
-            <td></td>
-            <td>
-              <div class="bulk-buttons">
-                <button type="button" class="bulk-btn" onclick="setAllBilling('venue', true)">全員選択</button>
-                <button type="button" class="bulk-btn" onclick="setAllBilling('venue', false)">全員解除</button>
-              </div>
-            </td>
-            <td>
-              <div class="bulk-buttons">
-                <button type="button" class="bulk-btn" onclick="setAllBilling('party1', true)">全員選択</button>
-                <button type="button" class="bulk-btn" onclick="setAllBilling('party1', false)">全員解除</button>
-              </div>
-            </td>
-            <td>
-              <div class="bulk-buttons">
-                <button type="button" class="bulk-btn" onclick="setAllBilling('party2', true)">全員選択</button>
-                <button type="button" class="bulk-btn" onclick="setAllBilling('party2', false)">全員解除</button>
-              </div>
-            </td>
-          </tr>
-        </thead>
-      `;
-
-      const bodyRows = members.map(name => {
-        const venueChecked  = billingSelections.venue[name]  ? 'checked' : '';
-        const party1Checked = billingSelections.party1[name] ? 'checked' : '';
-        const party2Checked = billingSelections.party2[name] ? 'checked' : '';
-
-        return `
-          <tr>
-            <td class="name-cell">${name}</td>
-            <td>
-              <input type="checkbox" ${venueChecked}
-                data-name="${name.replace(/"/g, '&quot;')}"
-                data-cat="venue"
-                onchange="onBillingCheckboxChange(this)">
-            </td>
-            <td>
-              <input type="checkbox" ${party1Checked}
-                data-name="${name.replace(/"/g, '&quot;')}"
-                data-cat="party1"
-                onchange="onBillingCheckboxChange(this)">
-            </td>
-            <td>
-              <input type="checkbox" ${party2Checked}
-                data-name="${name.replace(/"/g, '&quot;')}"
-                data-cat="party2"
-                onchange="onBillingCheckboxChange(this)">
-            </td>
-          </tr>
-        `;
-      }).join('');
-
-      table.innerHTML = header + '<tbody>' + bodyRows + '</tbody>';
-      wrapper.style.display = 'block';
-
-      // 初期表示時のハイライト反映
-      const inputs = table.querySelectorAll('input[type="checkbox"]');
-      inputs.forEach(cb => {
-        const td = cb.closest('td');
-        if (cb.checked) td.classList.add('checked-cell');
-      });
-    }
-
-    function onBillingCheckboxChange(checkbox) {
-      const name = checkbox.getAttribute('data-name');
-      const cat = checkbox.getAttribute('data-cat');
-      if (!billingSelections[cat]) return;
-      billingSelections[cat][name] = checkbox.checked;
-
-      const td = checkbox.closest('td');
-      if (!td) return;
-      if (checkbox.checked) {
-        td.classList.add('checked-cell');
-      } else {
-        td.classList.remove('checked-cell');
-      }
-    }
-
-    function setAllBilling(cat, checked) {
-      const table = document.getElementById('billingTable');
-      const inputs = table.querySelectorAll(`input[type="checkbox"][data-cat="${cat}"]`);
-      inputs.forEach(cb => {
-        cb.checked = checked;
-        const name = cb.getAttribute('data-name');
-        billingSelections[cat][name] = checked;
-        const td = cb.closest('td');
-        if (!td) return;
-        if (checked) td.classList.add('checked-cell');
-        else td.classList.remove('checked-cell');
-      });
-    }
-
-    function getParticipantsByCategory(cat) {
-      const members = getMembersFromTextarea('members-billing');
-      return members.filter(name => billingSelections[cat] && billingSelections[cat][name]);
-    }
-
-    function calcCategory(catKey) {
-      const totalInputId = 'totalCost-' + catKey;
-      const unitSelectId = 'roundUnit-' + catKey;
-      const resultId = 'result-' + catKey;
-      const lineId = 'lineText-' + catKey;
-
-      const totalStr = document.getElementById(totalInputId).value;
-      const unitStr = document.getElementById(unitSelectId).value;
-      const resultDiv = document.getElementById(resultId);
-      const lineArea = document.getElementById(lineId);
-
-      const totalCost = Number(totalStr);
-      const unit = Number(unitStr);
-      const participants = getParticipantsByCategory(catKey);
-      const count = participants.length;
-
-      if (!totalCost || totalCost <= 0 || !Number.isFinite(totalCost)) {
-        resultDiv.textContent = '総額が未入力か、0円以下です。';
-        lineArea.value = '';
-        return { perPerson: 0, count: 0, participants: [] };
-      }
-      if (count === 0) {
-        resultDiv.textContent = 'この区分にチェックされた参加者がいません。';
-        lineArea.value = '';
-        return { perPerson: 0, count: 0, participants: [] };
+      for (var ti = 0; ti < previousTeams.length; ti++) {
+        var members = previousTeams[ti].slice(); // コピー
+        shuffle(members);
+        for (var k = 0; k < members.length; k++) {
+          var teamIndex = (ti + k) % teamCount;
+          teams[teamIndex].push(members[k]);
+        }
       }
 
-      const rawPerPerson = totalCost / count;
-      const perPerson = Math.ceil(rawPerPerson / unit) * unit;
-
-      resultDiv.textContent =
-        `${categoryLabels[catKey]}：参加 ${toStyledNumber(count)}人 ／ 総額 ${totalCost.toLocaleString()}円 ／ １人あたり ${perPerson.toLocaleString()}円（${unit === 1 ? '１円単位' : unit + '円単位切り上げ'}）`;
-
-      const text =
-        `【本日の精算（${categoryLabels[catKey]}）】\n` +
-        `参加者：${toStyledNumber(count)}人\n` +
-        `総額：${totalCost.toLocaleString()}円\n` +
-        `１人あたり：${perPerson.toLocaleString()}円\n\n` +
-        `※端数は${unit === 1 ? 'そのまま' : unit + '円単位で切り上げ'}にしています。`;
-
-      lineArea.value = text;
-
-      return { perPerson, count, participants };
+      buildOutput(teams, startLabel);
     }
 
-    function calculateSettlement(catKey) {
-      calcCategory(catKey);
-    }
+    function copyLineText() {
+      var textArea = document.getElementById('lineText');
+      textArea.focus();
+      textArea.select();
+      textArea.setSelectionRange(0, 99999);
 
-    function calculateSettlementAll() {
-      const cats = ['venue', 'party1', 'party2'];
-      const perCatResult = {};
-      cats.forEach(cat => {
-        perCatResult[cat] = calcCategory(cat);
-      });
-
-      const members = getMembersFromTextarea('members-billing');
-      const totals = {};
-      const details = {};
-      members.forEach(name => {
-        totals[name] = 0;
-        details[name] = [];
-      });
-
-      cats.forEach(cat => {
-        const res = perCatResult[cat];
-        if (!res || !res.perPerson || res.perPerson <= 0 || !Array.isArray(res.participants)) return;
-        res.participants.forEach(name => {
-          if (!(name in totals)) return;
-          totals[name] += res.perPerson;
-          details[name].push(`${categoryLabels[cat]} ${res.perPerson.toLocaleString()}円`);
-        });
-      });
-
-      const namesWithTotal = members.filter(name => totals[name] > 0);
-      const perPersonSection = document.getElementById('perPersonSection');
-      const table = document.getElementById('perPersonTable');
-      const badge = document.getElementById('perPersonBadge');
-      const lineArea = document.getElementById('lineText-perPerson');
-
-      if (namesWithTotal.length === 0) {
-        perPersonSection.style.display = 'none';
-        lineArea.value = '';
-        alert('参加者に対して金額が割り当てられていません。総額やチェック状態を確認してください。');
-        return;
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(textArea.value)
+            .then(function () {
+              alert('LINE用テキストをコピーしました。');
+            })
+            .catch(function () {
+              document.execCommand('copy');
+              alert('LINE用テキストをコピーしました。');
+            });
+        } else {
+          document.execCommand('copy');
+          alert('LINE用テキストをコピーしました。');
+        }
+      } catch (e) {
+        alert('コピーに失敗しました。テキストを長押ししてコピーしてください。');
       }
-
-      badge.textContent = `合計対象：${toStyledNumber(namesWithTotal.length)}人`;
-
-      const bodyRows = namesWithTotal.map(name => {
-        const total = totals[name];
-        const detailStr = details[name].join('／');
-        return `
-          <tr>
-            <td class="name">${name}</td>
-            <td>${total.toLocaleString()}円</td>
-            <td>${detailStr || '-'}</td>
-          </tr>
-        `;
-      }).join('');
-
-      table.innerHTML = `
-        <thead>
-          <tr>
-            <th>名前</th>
-            <th>合計</th>
-            <th>内訳</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${bodyRows}
-        </tbody>
-      `;
-      perPersonSection.style.display = 'block';
-
-      let text = '【本日の精算（合計）】\n';
-      namesWithTotal.forEach(name => {
-        const total = totals[name];
-        const detailStr = details[name].join('／');
-        text += `${name}：${total.toLocaleString()}円`;
-        if (detailStr) text += `（${detailStr}）`;
-        text += '\n';
-      });
-
-      lineArea.value = text.trimEnd();
     }
   </script>
 </body>
