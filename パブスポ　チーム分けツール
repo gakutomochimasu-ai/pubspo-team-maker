@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>パブスポ専用 チーム分けツール</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 16px;
+      line-height: 1.6;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    h1 {
+      font-size: 1.4rem;
+      margin: 0;
+    }
+    .subtitle {
+      font-size: 0.9rem;
+      color: #555;
+    }
+    label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      display: block;
+      margin-top: 12px;
+      margin-bottom: 4px;
+    }
+    textarea, input, select {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 8px;
+      font-size: 0.95rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+    .row {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .row > * {
+      flex: 1;
+    }
+    button {
+      margin-top: 12px;
+      width: 100%;
+      padding: 10px;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+    }
+    .primary {
+      background: #222;
+      color: #fff;
+    }
+    .secondary {
+      background: #eee;
+      color: #222;
+    }
+    .results {
+      margin-top: 20px;
+      padding: 12px;
+      border-radius: 8px;
+      background: #f7f7f7;
+      border: 1px solid #ddd;
+    }
+    .team {
+      margin-bottom: 12px;
+    }
+    .team-title {
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .note {
+      font-size: 0.8rem;
+      color: #777;
+      margin-top: 4px;
+    }
+    .tabs {
+      display: flex;
+      border-radius: 999px;
+      background: #f0f0f0;
+      padding: 2px;
+      margin-bottom: 12px;
+      margin-top: 8px;
+    }
+    .tab {
+      flex: 1;
+      text-align: center;
+      padding: 6px 8px;
+      font-size: 0.9rem;
+      border-radius: 999px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .tab.active {
+      background: #222;
+      color: #fff;
+      font-weight: 600;
+    }
+    .section {
+      display: none;
+    }
+    .section.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>パブスポ専用 チーム分けツール</h1>
+    <div class="subtitle">1回目：人数をランダム分配 ／ 2回目以降：前回チームから再分配</div>
+  </header>
+
+  <main>
+    <div class="tabs">
+      <div class="tab active" id="tab-first" onclick="switchMode('first')">① 初回（個人リスト→チーム）</div>
+      <div class="tab" id="tab-next" onclick="switchMode('next')">② 2回目以降（前回チーム→新チーム）</div>
+    </div>
+
+    <!-- 初回モード -->
+    <section id="section-first" class="section active">
+      <label for="members-first">メンバー一覧（1行につき1人）</label>
+      <textarea id="members-first" placeholder="例）
+たける
+さとし
+ゆうこ
+まり
+けんた"></textarea>
+
+      <label for="teamCount-first">チーム数</label>
+      <select id="teamCount-first">
+        <option value="2">2チーム</option>
+        <option value="3">3チーム</option>
+        <option value="4">4チーム</option>
+        <option value="5">5チーム</option>
+        <option value="6">6チーム</option>
+      </select>
+
+      <div class="row">
+        <div>
+          <label for="teamPrefix-first">チーム名プレフィックス</label>
+          <input id="teamPrefix-first" type="text" value="チーム" />
+          <div class="note">例：チーム / GROUP / Squad など</div>
+        </div>
+        <div>
+          <label for="startLabel-first">チーム番号の開始</label>
+          <select id="startLabel-first">
+            <option value="number">1, 2, 3...</option>
+            <option value="alphabet">A, B, C...</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="primary" onclick="generateTeamsFirst()">ランダムでチーム分けする</button>
+    </section>
+
+    <!-- 2回目以降モード -->
+    <section id="section-next" class="section">
+      <label for="members-next">前回のチーム結果を貼り付け</label>
+      <textarea id="members-next" placeholder="このツールが出した「LINE投稿用テキスト」か、同じ形式のテキストを貼り付けてください。"></textarea>
+
+      <label for="teamCount-next">今回のチーム数</label>
+      <select id="teamCount-next">
+        <option value="2">2チーム</option>
+        <option value="3">3チーム</option>
+        <option value="4">4チーム</option>
+        <option value="5">5チーム</option>
+        <option value="6">6チーム</option>
+      </select>
+
+      <div class="row">
+        <div>
+          <label for="teamPrefix-next">チーム名プレフィックス</label>
+          <input id="teamPrefix-next" type="text" value="チーム" />
+        </div>
+        <div>
+          <label for="startLabel-next">チーム番号の開始</label>
+          <select id="startLabel-next">
+            <option value="number">1, 2, 3...</option>
+            <option value="alphabet">A, B, C...</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="note">
+        ロジック：前回の各チームごとのメンバーを、今回のチーム数に応じて<br>
+        できるだけバラけるように順番に振り分けます（同じ顔ぶれを減らすイメージ）。
+      </div>
+
+      <button class="primary" onclick="generateTeamsFromPrevious()">前回のチームから再分配する</button>
+    </section>
+
+    <section id="resultsSection" class="results" style="display:none;">
+      <div id="results"></div>
+
+      <label for="lineText">LINE投稿用テキスト</label>
+      <textarea id="lineText" readonly></textarea>
+      <button class="secondary" onclick="copyLineText()">LINE用テキストをコピー</button>
+      <div class="note">コピーしたら、そのままパブスポのLINEグループに貼り付けてください。</div>
+    </section>
+  </main>
+
+  <script>
+    function switchMode(mode) {
+      const tabFirst = document.getElementById('tab-first');
+      const tabNext = document.getElementById('tab-next');
+      const sectionFirst = document.getElementById('section-first');
+      const sectionNext = document.getElementById('section-next');
+
+      if (mode === 'first') {
+        tabFirst.classList.add('active');
+        tabNext.classList.remove('active');
+        sectionFirst.classList.add('active');
+        sectionNext.classList.remove('active');
+      } else {
+        tabFirst.classList.remove('active');
+        tabNext.classList.add('active');
+        sectionFirst.classList.remove('active');
+        sectionNext.classList.add('active');
+      }
+    }
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function buildOutput(teams, prefix, startLabel) {
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.innerHTML = '';
+
+      let lineText = '【パブスポ チーム分け結果】\\n\\n';
+
+      for (let i = 0; i < teams.length; i++) {
+        let label;
+        if (startLabel === 'alphabet') {
+          label = String.fromCharCode('A'.charCodeAt(0) + i);
+        } else {
+          label = (i + 1).toString();
+        }
+        const teamName = prefix + label;
+
+        const teamDiv = document.createElement('div');
+        teamDiv.className = 'team';
+
+        const title = document.createElement('div');
+        title.className = 'team-title';
+        title.textContent = '【' + teamName + '】';
+        teamDiv.appendChild(title);
+
+        const list = document.createElement('div');
+        list.innerHTML = teams[i].length > 0 ? teams[i].join('<br>') : '<span class="note">（メンバーなし）</span>';
+        teamDiv.appendChild(list);
+
+        resultsDiv.appendChild(teamDiv);
+
+        lineText += '【' + teamName + '】\\n';
+        if (teams[i].length > 0) {
+          lineText += teams[i].join('\\n');
+        } else {
+          lineText += '（メンバーなし）';
+        }
+        lineText += '\\n\\n';
+      }
+
+      document.getElementById('lineText').value = lineText.trimEnd();
+      document.getElementById('resultsSection').style.display = 'block';
+    }
+
+    // ① 初回：個人リストからランダムで分配
+    function generateTeamsFirst() {
+      const membersText = document.getElementById('members-first').value;
+      const teamCount = parseInt(document.getElementById('teamCount-first').value, 10);
+      const prefix = document.getElementById('teamPrefix-first').value || 'チーム';
+      const startLabel = document.getElementById('startLabel-first').value;
+
+      const members = membersText
+        .split(/\\r?\\n/)
+        .map(m => m.trim())
+        .filter(m => m.length > 0);
+
+      if (members.length === 0) {
+        alert('メンバーを1人以上入力してください。');
+        return;
+      }
+      if (teamCount <= 0) {
+        alert('チーム数が正しくありません。');
+        return;
+      }
+      if (teamCount > members.length) {
+        if (!confirm('メンバー数よりチーム数の方が多いです。それでも続けますか？')) {
+          return;
+        }
+      }
+
+      shuffle(members);
+
+      const teams = Array.from({ length: teamCount }, () => []);
+      for (let i = 0; i < members.length; i++) {
+        const teamIndex = i % teamCount;
+        teams[teamIndex].push(members[i]);
+      }
+
+      buildOutput(teams, prefix, startLabel);
+    }
+
+    // ② 2回目以降：前回チームごとにメンバーを分配
+    function parsePreviousTeams(text) {
+      const lines = text.split(/\\r?\\n/);
+      const teams = [];
+      let currentTeam = null;
+
+      for (let raw of lines) {
+        const line = raw.trim();
+        if (line.length === 0) continue;
+
+        // チーム名行（【チーム1】など）
+        const match = line.match(/^【(.+?)】/);
+        if (match) {
+          if (currentTeam !== null && currentTeam.members.length > 0) {
+            teams.push(currentTeam.members);
+          } else if (currentTeam !== null && currentTeam.members.length === 0) {
+            teams.push([]);
+          }
+          currentTeam = { name: match[1], members: [] };
+          continue;
+        }
+
+        if (line === '（メンバーなし）') {
+          // 明示的にメンバーなし
+          if (currentTeam !== null && currentTeam.members.length === 0) {
+            continue;
+          }
+        } else {
+          if (currentTeam === null) {
+            // チーム名がないままメンバーが来た場合は、まとめて1チーム扱い
+            currentTeam = { name: 'チーム', members: [] };
+          }
+          currentTeam.members.push(line);
+        }
+      }
+
+      if (currentTeam !== null) {
+        teams.push(currentTeam.members);
+      }
+
+      return teams;
+    }
+
+    function generateTeamsFromPrevious() {
+      const text = document.getElementById('members-next').value;
+      const teamCount = parseInt(document.getElementById('teamCount-next').value, 10);
+      const prefix = document.getElementById('teamPrefix-next').value || 'チーム';
+      const startLabel = document.getElementById('startLabel-next').value;
+
+      if (!text.trim()) {
+        alert('前回のチーム結果を貼り付けてください。');
+        return;
+      }
+      if (teamCount <= 0) {
+        alert('チーム数が正しくありません。');
+        return;
+      }
+
+      const previousTeams = parsePreviousTeams(text);
+      const allMembers = previousTeams.flat();
+
+      if (allMembers.length === 0) {
+        alert('メンバーが読み取れませんでした。形式を確認してください。');
+        return;
+      }
+      if (teamCount > allMembers.length) {
+        if (!confirm('メンバー数よりチーム数の方が多いです。それでも続けますか？')) {
+          return;
+        }
+      }
+
+      const teams = Array.from({ length: teamCount }, () => []);
+
+      // 前回の各チームごとに、今回のチームにできるだけバラけるよう振り分け
+      for (let t = 0; t < previousTeams.length; t++) {
+        const members = previousTeams[t].slice();
+        shuffle(members);
+        for (let i = 0; i < members.length; i++) {
+          const teamIndex = (t + i) % teamCount;
+          teams[teamIndex].push(members[i]);
+        }
+      }
+
+      buildOutput(teams, prefix, startLabel);
+    }
+
+    function copyLineText() {
+      const textArea = document.getElementById('lineText');
+      textArea.select();
+      textArea.setSelectionRange(0, 99999); // for mobile
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(textArea.value)
+          .then(() => alert('LINE用テキストをコピーしました。'))
+          .catch(() => {
+            document.execCommand('copy');
+            alert('LINE用テキストをコピーしました。');
+          });
+      } else {
+        document.execCommand('copy');
+        alert('LINE用テキストをコピーしました。');
+      }
+    }
+  </script>
+</body>
+</html>
