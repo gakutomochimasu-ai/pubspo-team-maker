@@ -21,8 +21,16 @@
     body {
       margin: 0;
       padding: 18px 14px 26px;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
-        "Helvetica Neue", "Segoe UI", sans-serif;
+      font-family:
+        "SF Pro Rounded",
+        "SF Pro Text",
+        -apple-system,
+        BlinkMacSystemFont,
+        "Hiragino Maru Gothic ProN",
+        "Yu Gothic UI",
+        "Yu Gothic",
+        "Meiryo",
+        sans-serif;
       line-height: 1.6;
       background:
         radial-gradient(circle at top, #252b3b 0, #050608 55%),
@@ -41,13 +49,14 @@
     }
 
     h1 {
-      font-size: 1.32rem;
+      font-size: 1.34rem;
       margin: 0;
       letter-spacing: 0.08em;
       text-transform: uppercase;
       background: linear-gradient(120deg, #fff6d4, var(--gold-strong));
       -webkit-background-clip: text;
       color: transparent;
+      font-weight: 800;
     }
 
     .subtitle {
@@ -224,7 +233,6 @@
       flex-shrink: 0;
     }
     .tab-label {
-      /* 折り返しOKにして、②がはみ出さないようにする */
       text-align: left;
     }
     .tab.active {
@@ -328,7 +336,7 @@
     @media (min-width: 640px) {
       body { padding: 24px 16px 32px; }
       header { margin-bottom: 20px; }
-      h1 { font-size: 1.4rem; }
+      h1 { font-size: 1.42rem; }
       .card { padding: 18px 18px 20px; }
       button { font-size: 1rem; }
       .tab { font-size: 0.8rem; }
@@ -346,11 +354,11 @@
       <div class="card-inner">
         <div class="tabs">
           <div class="tab active" id="tab-first" onclick="switchMode('first')">
-            <div class="tab-number">1</div>
+            <div class="tab-number">１</div>
             <div class="tab-label">初回（個人リスト→チーム）</div>
           </div>
           <div class="tab" id="tab-next" onclick="switchMode('next')">
-            <div class="tab-number">2</div>
+            <div class="tab-number">２</div>
             <div class="tab-label">2回目以降（前回チーム→新チーム）</div>
           </div>
         </div>
@@ -362,18 +370,22 @@
 
           <label for="teamCount-first">チーム数</label>
           <select id="teamCount-first">
-            <option value="2">2チーム</option>
-            <option value="3">3チーム</option>
-            <option value="4">4チーム</option>
-            <option value="5">5チーム</option>
-            <option value="6">6チーム</option>
+            <option value="2">２チーム</option>
+            <option value="3">３チーム</option>
+            <option value="4">４チーム</option>
+            <option value="5">５チーム</option>
+            <option value="6">６チーム</option>
+            <option value="7">７チーム</option>
+            <option value="8">８チーム</option>
+            <option value="9">９チーム</option>
+            <option value="10">10チーム</option>
           </select>
 
           <div class="row">
             <div>
               <label for="startLabel-first">チーム番号の開始</label>
               <select id="startLabel-first">
-                <option value="number">1, 2, 3...</option>
+                <option value="number">１, ２, ３...</option>
                 <option value="alphabet">A, B, C...</option>
               </select>
             </div>
@@ -391,18 +403,22 @@
 
           <label for="teamCount-next">今回のチーム数</label>
           <select id="teamCount-next">
-            <option value="2">2チーム</option>
-            <option value="3">3チーム</option>
-            <option value="4">4チーム</option>
-            <option value="5">5チーム</option>
-            <option value="6">6チーム</option>
+            <option value="2">２チーム</option>
+            <option value="3">３チーム</option>
+            <option value="4">４チーム</option>
+            <option value="5">５チーム</option>
+            <option value="6">６チーム</option>
+            <option value="7">７チーム</option>
+            <option value="8">８チーム</option>
+            <option value="9">９チーム</option>
+            <option value="10">10チーム</option>
           </select>
 
           <div class="row">
             <div>
               <label for="startLabel-next">チーム番号の開始</label>
               <select id="startLabel-next">
-                <option value="number">1, 2, 3...</option>
+                <option value="number">１, ２, ３...</option>
                 <option value="alphabet">A, B, C...</option>
               </select>
             </div>
@@ -460,6 +476,18 @@
       }
     }
 
+    // １桁なら全角、２桁以上なら半角のまま
+    function toStyledNumber(num) {
+      const n = Number(num);
+      if (!Number.isFinite(n)) return String(num);
+      const s = String(n);
+      if (s.length === 1) {
+        const base = '０'.charCodeAt(0);
+        return String.fromCharCode(base + n); // ０〜９
+      }
+      return s;
+    }
+
     function shuffle(array) {
       for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -475,8 +503,10 @@
 
       const totalMembers = teams.reduce((sum, t) => sum + t.length, 0);
       const nonEmptyTeams = teams.filter(t => t.length > 0).length;
+      const teamCount = teams.length;
+
       summaryBadge.textContent =
-        `${totalMembers}人 / ${teams.length}チーム（うち${nonEmptyTeams}チームにメンバーあり）`;
+        `${toStyledNumber(totalMembers)}人 / ${toStyledNumber(teamCount)}チーム（うち${toStyledNumber(nonEmptyTeams)}チームにメンバーあり）`;
 
       let lineText = '【パブスポ チーム分け結果】\n\n';
 
@@ -485,7 +515,7 @@
         if (startLabel === 'alphabet') {
           label = String.fromCharCode('A'.charCodeAt(0) + i);
         } else {
-          label = (i + 1).toString();
+          label = toStyledNumber(i + 1);
         }
         const teamName = 'チーム' + label;
         const count = teams[i].length;
@@ -502,7 +532,7 @@
 
         const countSpan = document.createElement('div');
         countSpan.className = 'team-count';
-        countSpan.textContent = count + '人';
+        countSpan.textContent = toStyledNumber(count) + '人';
 
         titleLine.appendChild(title);
         titleLine.appendChild(countSpan);
