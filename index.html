@@ -463,7 +463,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 4px;
     }
     .billing-table input[type="checkbox"] {
       width: 18px;
@@ -471,15 +470,13 @@
       transform: scale(1.1);
       cursor: pointer;
     }
-    .check-mark {
-      font-size: 0.85rem;
-    }
 
     .billing-table td.checked-cell {
-      background: radial-gradient(circle at top, rgba(250,204,21,0.28), rgba(15,23,42,0.9));
+      background: radial-gradient(circle at center, rgba(250,204,21,0.30), rgba(15,23,42,0.98));
       box-shadow:
-        inset 0 0 0 1px rgba(250,204,21,0.55),
-        0 0 0 1px rgba(15,23,42,0.8);
+        inset 0 0 0 1px rgba(250,204,21,0.6),
+        0 0 10px rgba(250,204,21,0.35);
+      transition: background 0.12s ease-out, box-shadow 0.12s ease-out;
     }
 
     .billing-columns {
@@ -594,6 +591,10 @@
               <option value="4">4チーム</option>
               <option value="5">5チーム</option>
               <option value="6">6チーム</option>
+              <option value="7">7チーム</option>
+              <option value="8">8チーム</option>
+              <option value="9">9チーム</option>
+              <option value="10">10チーム</option>
             </select>
 
             <div class="row">
@@ -623,6 +624,10 @@
               <option value="4">4チーム</option>
               <option value="5">5チーム</option>
               <option value="6">6チーム</option>
+              <option value="7">7チーム</option>
+              <option value="8">8チーム</option>
+              <option value="9">9チーム</option>
+              <option value="10">10チーム</option>
             </select>
 
             <div class="row">
@@ -1203,16 +1208,13 @@
         html += '<td class="name-cell">' + name + '</td>';
 
         html += '<td><div class="check-cell"><input type="checkbox"' + vChecked +
-          ' data-name="' + safeName + '" data-cat="venue" onchange="onBillingCheckboxChange(this)">' +
-          '<span class="check-mark">' + (billingSelections.venue[name] ? '✅' : '') + '</span></div></td>';
+          ' data-name="' + safeName + '" data-cat="venue" onchange="onBillingCheckboxChange(this)"></div></td>';
 
         html += '<td><div class="check-cell"><input type="checkbox"' + p1Checked +
-          ' data-name="' + safeName + '" data-cat="party1" onchange="onBillingCheckboxChange(this)">' +
-          '<span class="check-mark">' + (billingSelections.party1[name] ? '✅' : '') + '</span></div></td>';
+          ' data-name="' + safeName + '" data-cat="party1" onchange="onBillingCheckboxChange(this)"></div></td>';
 
         html += '<td><div class="check-cell"><input type="checkbox"' + p2Checked +
-          ' data-name="' + safeName + '" data-cat="party2" onchange="onBillingCheckboxChange(this)">' +
-          '<span class="check-mark">' + (billingSelections.party2[name] ? '✅' : '') + '</span></div></td>';
+          ' data-name="' + safeName + '" data-cat="party2" onchange="onBillingCheckboxChange(this)"></div></td>';
 
         html += '</tr>';
       }
@@ -1241,10 +1243,6 @@
 
       var wrapper = checkbox.parentNode;
       var td = wrapper.parentNode;
-      var marks = wrapper.getElementsByClassName('check-mark');
-      if (marks.length > 0) {
-        marks[0].innerHTML = checkbox.checked ? '✅' : '';
-      }
 
       if (checkbox.checked) {
         td.classList.add('checked-cell');
@@ -1267,10 +1265,6 @@
 
         var wrapper = cb.parentNode;
         var td = wrapper.parentNode;
-        var marks = wrapper.getElementsByClassName('check-mark');
-        if (marks.length > 0) {
-          marks[0].innerHTML = checked ? '✅' : '';
-        }
 
         if (checked) td.classList.add('checked-cell');
         else td.classList.remove('checked-cell');
