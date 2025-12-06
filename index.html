@@ -1,3 +1,399 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>パブスポ専用 チーム分けツール</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --bg-main: #050608;
+      --bg-card: #111318;
+      --bg-input: #191c22;
+      --gold: #d4af37;
+      --gold-soft: #f3d87a;
+      --text-main: #f5f5f5;
+      --text-muted: #9ca3af;
+      --border-subtle: #272b33;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 16px;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Helvetica Neue", "Segoe UI", sans-serif;
+      line-height: 1.6;
+      background: radial-gradient(circle at top, #151821 0, #050608 52%);
+      color: var(--text-main);
+    }
+
+    .app-shell {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      font-size: 1.3rem;
+      margin: 0;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .subtitle {
+      margin-top: 6px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .card {
+      background: rgba(10,12,18,0.96);
+      border-radius: 18px;
+      border: 1px solid rgba(212,175,55,0.25);
+      box-shadow:
+        0 18px 45px rgba(0,0,0,0.7),
+        0 0 0 1px rgba(255,255,255,0.02);
+      padding: 14px 14px 18px;
+      backdrop-filter: blur(12px);
+    }
+
+    label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: block;
+      margin-top: 12px;
+      margin-bottom: 4px;
+    }
+
+    textarea,
+    select,
+    input {
+      width: 100%;
+      padding: 9px 10px;
+      font-size: 0.95rem;
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-input);
+      color: var(--text-main);
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    textarea::placeholder {
+      color: rgba(156,163,175,0.8);
+    }
+
+    select {
+      padding-right: 28px;
+      background-image:
+        linear-gradient(45deg, transparent 50%, var(--gold) 50%),
+        linear-gradient(135deg, var(--gold) 50%, transparent 50%);
+      background-position:
+        calc(100% - 14px) 55%,
+        calc(100% - 9px) 55%;
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
+    }
+
+    .row {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .row > * {
+      flex: 1;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 14px;
+      padding: 11px;
+      font-size: 0.98rem;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.08s ease-out, box-shadow 0.08s ease-out,
+        background 0.12s ease-out, opacity 0.12s ease-out;
+      font-weight: 600;
+    }
+
+    .primary {
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-soft) 100%);
+      color: #1b1b1f;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+    }
+
+    .primary:active {
+      transform: translateY(1px) scale(0.99);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.7);
+      opacity: 0.9;
+    }
+
+    .secondary {
+      background: transparent;
+      color: var(--gold-soft);
+      border: 1px solid rgba(243,216,122,0.5);
+    }
+
+    .secondary:active {
+      transform: translateY(1px) scale(0.99);
+      opacity: 0.9;
+    }
+
+    .tabs {
+      display: flex;
+      border-radius: 999px;
+      background: rgba(15,17,24,0.97);
+      padding: 3px;
+      margin-bottom: 12px;
+      margin-top: 2px;
+      border: 1px solid rgba(212,175,55,0.24);
+    }
+
+    .tab {
+      flex: 1;
+      text-align: center;
+      padding: 6px 8px;
+      font-size: 0.8rem;
+      border-radius: 999px;
+      cursor: pointer;
+      user-select: none;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .tab::before {
+      content: "●";
+      font-size: 0.55rem;
+      opacity: 0.45;
+    }
+
+    .tab.active {
+      background: radial-gradient(circle at top left, #fff9e0 0, var(--gold-soft) 48%, var(--gold) 100%);
+      color: #111318;
+      font-weight: 700;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.7);
+    }
+
+    .tab.active::before {
+      opacity: 1;
+    }
+
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    .note {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .results {
+      margin-top: 18px;
+      padding: 12px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(18,20,28,0.98), rgba(10,12,18,0.98));
+      border: 1px solid rgba(212,175,55,0.35);
+    }
+
+    .results-header {
+      font-size: 0.85rem;
+      margin-bottom: 8px;
+      color: var(--gold-soft);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .results-header span.icon {
+      font-size: 0.9rem;
+    }
+
+    .team {
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed rgba(75,85,99,0.7);
+    }
+
+    .team:last-of-type {
+      border-bottom: none;
+      margin-bottom: 6px;
+      padding-bottom: 0;
+    }
+
+    .team-title {
+      font-weight: 700;
+      margin-bottom: 3px;
+      font-size: 0.9rem;
+      color: var(--gold-soft);
+    }
+
+    .team-members {
+      font-size: 0.9rem;
+    }
+
+    .team-members span.empty {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+    }
+
+    .line-label {
+      margin-top: 10px;
+    }
+
+    .footer-note {
+      margin-top: 8px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    @media (min-width: 640px) {
+      body {
+        padding: 24px 16px 32px;
+      }
+      header {
+        margin-bottom: 20px;
+      }
+      h1 {
+        font-size: 1.4rem;
+      }
+      .card {
+        padding: 18px 18px 20px;
+      }
+      button {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header>
+      <h1>パブスポ専用 チーム分けツール</h1>
+      <div class="subtitle">1回目：人数をランダム分配 ／ 2回目以降：前回チームから再分配</div>
+    </header>
+
+    <div class="card">
+      <div class="tabs">
+        <div class="tab active" id="tab-first" onclick="switchMode('first')">① 初回（個人リスト→チーム）</div>
+        <div class="tab" id="tab-next" onclick="switchMode('next')">② 2回目以降（前回チーム→新チーム）</div>
+      </div>
+
+      <!-- 初回モード -->
+      <section id="section-first" class="section active">
+        <label for="members-first">メンバー一覧（1行につき1人）</label>
+        <textarea id="members-first" placeholder="例）
+たける
+さとし
+ゆうこ
+まり
+けんた"></textarea>
+
+        <label for="teamCount-first">チーム数</label>
+        <select id="teamCount-first">
+          <option value="2">2チーム</option>
+          <option value="3">3チーム</option>
+          <option value="4">4チーム</option>
+          <option value="5">5チーム</option>
+          <option value="6">6チーム</option>
+        </select>
+
+        <div class="row">
+          <div>
+            <label for="teamPrefix-first">チーム名プレフィックス</label>
+            <input id="teamPrefix-first" type="text" value="チーム" />
+            <div class="note">例：チーム / GROUP / Squad など</div>
+          </div>
+          <div>
+            <label for="startLabel-first">チーム番号の開始</label>
+            <select id="startLabel-first">
+              <option value="number">1, 2, 3...</option>
+              <option value="alphabet">A, B, C...</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="primary" onclick="generateTeamsFirst()">ランダムでチーム分けする</button>
+      </section>
+
+      <!-- 2回目以降モード -->
+      <section id="section-next" class="section">
+        <label for="members-next">前回のチーム結果を貼り付け</label>
+        <textarea id="members-next" placeholder="このツールが出した「LINE投稿用テキスト」か、同じ形式のテキストを貼り付けてください。"></textarea>
+
+        <label for="teamCount-next">今回のチーム数</label>
+        <select id="teamCount-next">
+          <option value="2">2チーム</option>
+          <option value="3">3チーム</option>
+          <option value="4">4チーム</option>
+          <option value="5">5チーム</option>
+          <option value="6">6チーム</option>
+        </select>
+
+        <div class="row">
+          <div>
+            <label for="teamPrefix-next">チーム名プレフィックス</label>
+            <input id="teamPrefix-next" type="text" value="チーム" />
+          </div>
+          <div>
+            <label for="startLabel-next">チーム番号の開始</label>
+            <select id="startLabel-next">
+              <option value="number">1, 2, 3...</option>
+              <option value="alphabet">A, B, C...</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="note">
+          ロジック：前回の各チームごとのメンバーを、今回のチーム数に応じて<br>
+          できるだけバラけるように順番に振り分けます（同じ顔ぶれを減らすイメージ）。
+        </div>
+
+        <button class="primary" onclick="generateTeamsFromPrevious()">前回のチームから再分配する</button>
+      </section>
+
+      <section id="resultsSection" class="results" style="display:none;">
+        <div class="results-header">
+          <span class="icon">🏅</span>
+          <span>チーム分け結果</span>
+        </div>
+        <div id="results"></div>
+
+        <label class="line-label" for="lineText">LINE投稿用テキスト</label>
+        <textarea id="lineText" readonly></textarea>
+        <button class="secondary" onclick="copyLineText()">LINE用テキストをコピー</button>
+      </section>
+
+      <div class="footer-note">
+        Powered by Pubspo team / GitHub Pages
+      </div>
+    </div>
+  </div>
+
   <script>
     function switchMode(mode) {
       const tabFirst = document.getElementById('tab-first');
@@ -30,7 +426,6 @@
       const resultsDiv = document.getElementById('results');
       resultsDiv.innerHTML = '';
 
-      // ↩ ここを \n に直しているので、LINE用テキストは本当の改行になります
       let lineText = '【パブスポ チーム分け結果】\n\n';
 
       for (let i = 0; i < teams.length; i++) {
@@ -51,7 +446,13 @@
         teamDiv.appendChild(title);
 
         const list = document.createElement('div');
-        list.innerHTML = teams[i].length > 0 ? teams[i].join('<br>') : '<span class="note">（メンバーなし）</span>';
+        if (teams[i].length > 0) {
+          list.className = 'team-members';
+          list.innerHTML = teams[i].join('<br>');
+        } else {
+          list.className = 'team-members';
+          list.innerHTML = '<span class="empty">（メンバーなし）</span>';
+        }
         teamDiv.appendChild(list);
 
         resultsDiv.appendChild(teamDiv);
@@ -97,8 +498,6 @@
 
       shuffle(members);
 
-      // ここで必ず teamCount 個のチーム配列を作り、
-      // i % teamCount で均等に振り分けます
       const teams = Array.from({ length: teamCount }, () => []);
       for (let i = 0; i < members.length; i++) {
         const teamIndex = i % teamCount;
@@ -110,11 +509,6 @@
 
     // ② 2回目以降：前回チームごとにメンバーを分配
     function parsePreviousTeams(text) {
-      // もし \n が文字列として残っていたら、本当の改行に変換
-      if (text.includes('\\n')) {
-        text = text.replace(/\\n/g, '\n');
-      }
-
       const lines = text.split(/\r?\n/);
       const teams = [];
       let currentTeam = null;
@@ -123,7 +517,6 @@
         const line = raw.trim();
         if (line.length === 0) continue;
 
-        // チーム名行（【チームA】など）
         const match = line.match(/^【(.+?)】/);
         if (match) {
           if (currentTeam !== null) {
@@ -180,7 +573,6 @@
 
       const teams = Array.from({ length: teamCount }, () => []);
 
-      // 前回の各チームごとに、今回のチームへ均等にばらけるように振り分け
       for (let t = 0; t < previousTeams.length; t++) {
         const members = previousTeams[t].slice();
         shuffle(members);
@@ -196,7 +588,7 @@
     function copyLineText() {
       const textArea = document.getElementById('lineText');
       textArea.select();
-      textArea.setSelectionRange(0, 99999); // for mobile
+      textArea.setSelectionRange(0, 99999);
 
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(textArea.value)
@@ -211,3 +603,5 @@
       }
     }
   </script>
+</body>
+</html>
